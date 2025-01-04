@@ -13,7 +13,7 @@ export default async function handler(req: any, res: any) {
       console.log("Loading credentials...");
       const credentialsPath = path.join(
         process.cwd(),
-        "src/credentials/poetic-chariot-446810-a8-84a4941b8e94.json"
+        "src/credentials/credential-json.json"
       );
       const credentials = JSON.parse(fs.readFileSync(credentialsPath, "utf-8"));
       // Authenticate with Google Sheets API

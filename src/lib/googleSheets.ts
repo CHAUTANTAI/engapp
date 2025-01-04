@@ -7,7 +7,7 @@ const spreadsheetId = "1ObxYpe_22uMMVQRoGbXDag07l5Y7hDwWSC7lmTzzIQM"; // ID củ
 // Load credentials file
 const credentialsPath = path.join(
   process.cwd(),
-  "src/credentials/poetic-chariot-446810-a8-84a4941b8e94.json"
+  "src/credentials/credential-json.json"
 );
 const credentials = JSON.parse(fs.readFileSync(credentialsPath, "utf-8"));
 
