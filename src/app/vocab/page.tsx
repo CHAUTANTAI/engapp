@@ -8,6 +8,7 @@ import { Dropdown } from "primereact/dropdown";
 import { useForm, Controller } from "react-hook-form";
 import Header from "../../components/header";
 import AddVocabDialog from "./addNewVocabDialog";
+import { getSheetData } from "../../lib/googleSheets";
 
 interface Vocab {
   vocab_id: number;
@@ -32,7 +33,6 @@ const VocabPage = () => {
   const [classOptions, setClassOptions] = useState<any[]>([]); // Sample classes
   const [isDialogVisible, setDialogVisible] = useState<boolean>(false);
 
-  // Fetch vocab data
   const fetchVocabs = async (page: number, searchParams: any) => {
     setLoading(true);
     try {
@@ -42,14 +42,16 @@ const VocabPage = () => {
         meaning: searchParams.meaning || "",
         page: page.toString(),
       });
-
+  
       const response = await fetch(`/api/vocab?${params.toString()}`);
       if (response.ok) {
         const data = await response.json();
         setVocabs(data);
-        setTotalRecords(data.totalCount);
+        setTotalRecords(data.length); // Cập nhật tổng số bản ghi
       } else {
         console.error("Failed to fetch data");
+        console.log(response);
+        
       }
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -57,6 +59,7 @@ const VocabPage = () => {
       setLoading(false);
     }
   };
+  
 
   // Search button handler
   const onSearch = (data: any) => {
@@ -64,8 +67,8 @@ const VocabPage = () => {
     fetchVocabs(0, data);
   };
 
-   // Handle dialog form submission
-   const onAddVocab = async (data: any) => {
+  // Handle dialog form submission
+  const onAddVocab = async (data: any) => {
     try {
       const response = await fetch("/api/vocab", {
         method: "POST",
@@ -129,7 +132,13 @@ const VocabPage = () => {
                 <Controller
                   name="vocab"
                   control={control}
-                  render={({ field }) => <InputText id="vocab" {...field} className="w-full bg-gray-800 text-white border-gray-600" />}
+                  render={({ field }) => (
+                    <InputText
+                      id="vocab"
+                      {...field}
+                      className="w-full bg-gray-800 text-white border-gray-600"
+                    />
+                  )}
                 />
                 <label htmlFor="vocab">Vocab</label>
               </span>
@@ -159,13 +168,23 @@ const VocabPage = () => {
                 <Controller
                   name="meaning"
                   control={control}
-                  render={({ field }) => <InputText id="meaning" {...field} className="w-full bg-gray-800 text-white border-gray-600" />}
+                  render={({ field }) => (
+                    <InputText
+                      id="meaning"
+                      {...field}
+                      className="w-full bg-gray-800 text-white border-gray-600"
+                    />
+                  )}
                 />
                 <label htmlFor="meaning">Meaning</label>
               </span>
             </div>
 
-            <Button type="submit" label="Search" className="col-span-3 mt-4 bg-blue-500 hover:bg-blue-600 text-white" />
+            <Button
+              type="submit"
+              label="Search"
+              className="col-span-3 mt-4 bg-blue-500 hover:bg-blue-600 text-white"
+            />
           </form>
         </div>
 
@@ -183,15 +202,15 @@ const VocabPage = () => {
           <Column field="ipa" header="IPA" />
           <Column field="created_at" header="Created At" />
         </DataTable>
-         {/* Use AddVocabDialog */}
-         <AddVocabDialog
+        {/* Use AddVocabDialog */}
+        {/* <AddVocabDialog
           visible={isDialogVisible}
           onHide={() => setDialogVisible(false)}
           onAddVocab={onAddVocab}
           classOptions={classOptions}
           control={control}
           reset={reset}
-        />
+        /> */}
       </main>
     </div>
   );
