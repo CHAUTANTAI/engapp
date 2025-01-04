@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { FC } from "react";
 import { Dialog } from "primereact/dialog";
@@ -19,40 +20,38 @@ const AddVocabDialog: FC<AddVocabDialogProps> = ({
   onHide,
   onAddVocab,
   classOptions,
-  reset,
 }) => {
   // Create new useForm for the add vocab form
   const { control, handleSubmit, reset: resetForm } = useForm();
 
-
   //handle call api add new vocab
   const addNewVocabService = async (data: any) => {
     try {
-        // Gọi API POST để thêm vocab mới vào DB
-        const response = await fetch('/api/vocab', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(data),
-        });
-    
-        if (response.ok) {
-          // Nếu thêm vocab thành công
-          alert('Vocab added successfully');
-          resetForm(); // Reset the form after submission
-          onHide(); // Close the dialog after submission
-        } else {
-          // Nếu có lỗi khi thêm vocab
-          const errorData = await response.json();
-          alert(`Error: ${errorData.error}`);
-        }
-      } catch (error) {
-        console.error('Error during adding vocab:', error);
-        alert('An unexpected error occurred while adding the vocab');
+      // Gọi API POST để thêm vocab mới vào DB
+      const response = await fetch("/api/vocab", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (response.ok) {
+        // Nếu thêm vocab thành công
+        alert("Vocab added successfully");
+        resetForm(); // Reset the form after submission
+        onHide(); // Close the dialog after submission
+      } else {
+        // Nếu có lỗi khi thêm vocab
+        const errorData = await response.json();
+        alert(`Error: ${errorData.error}`);
       }
-  }
-  
+    } catch (error) {
+      console.error("Error during adding vocab:", error);
+      alert("An unexpected error occurred while adding the vocab");
+    }
+  };
+
   // Submit handler for the form
   const onSubmit = (data: any) => {
     // Call the passed down onAddVocab function from parent component

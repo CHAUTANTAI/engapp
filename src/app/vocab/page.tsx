@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import { useState, useEffect } from "react";
 import { DataTable } from "primereact/datatable";
@@ -8,7 +9,6 @@ import { Dropdown } from "primereact/dropdown";
 import { useForm, Controller } from "react-hook-form";
 import Header from "../../components/header";
 import AddVocabDialog from "./addNewVocabDialog";
-import { getSheetData } from "../../lib/googleSheets";
 
 interface Vocab {
   vocab_id: number;
@@ -24,16 +24,22 @@ interface Vocab {
   updated_at: string | null;
 }
 
+interface Class {
+  class_id: number;
+  content: string;
+}
+
 const VocabPage = () => {
   const { control, handleSubmit, reset } = useForm();
   const [vocabs, setVocabs] = useState<Vocab[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [totalRecords, setTotalRecords] = useState<number>(0);
   const [page, setPage] = useState<number>(0);
-  const [classOptions, setClassOptions] = useState<any[]>([]); // Sample classes
+  const [classOptions, setClassOptions] = useState<Class[]>([]); // Sample classes
   const [isDialogVisible, setDialogVisible] = useState<boolean>(false);
+  console.log(page);
 
-  const fetchVocabs = async (page: number, searchParams: any) => {
+  const fetchVocabs = async (page: number, searchParams?: any) => {
     setLoading(true);
     try {
       const params = new URLSearchParams({
@@ -42,7 +48,7 @@ const VocabPage = () => {
         meaning: searchParams.meaning || "",
         page: page.toString(),
       });
-  
+
       const response = await fetch(`/api/vocab?${params.toString()}`);
       if (response.ok) {
         const data = await response.json();
@@ -51,7 +57,6 @@ const VocabPage = () => {
       } else {
         console.error("Failed to fetch data");
         console.log(response);
-        
       }
     } catch (error) {
       console.error("Error fetching data:", error);
@@ -59,16 +64,15 @@ const VocabPage = () => {
       setLoading(false);
     }
   };
-  
 
-  // Search button handler
-  const onSearch = (data: any) => {
-    setPage(0); // Reset page to 1 on new search
-    fetchVocabs(0, data);
-  };
+  // // Search button handler
+  // const onSearch = (data: any) => {
+  //   setPage(0); // Reset page to 1 on new search
+  //   fetchVocabs(0, data);
+  // };
 
   // Handle dialog form submission
-  const onAddVocab = async (data: any) => {
+  const onAddVocab = async (data: Vocab) => {
     try {
       const response = await fetch("/api/vocab", {
         method: "POST",
@@ -100,9 +104,9 @@ const VocabPage = () => {
   // Fetch classes (example data, replace with actual API if available)
   useEffect(() => {
     setClassOptions([
-      { label: "Class 1", value: 1 },
-      { label: "Class 2", value: 2 },
-      { label: "Class 3", value: 3 },
+      { content: "V", class_id: 1 },
+      { content: "N", class_id: 2 },
+      { content: "ADJ", class_id: 3 },
     ]);
   }, []);
 
@@ -124,7 +128,7 @@ const VocabPage = () => {
 
         <div className="p-4 border border-gray-700 rounded-md mb-4">
           <form
-            onSubmit={handleSubmit(onSearch)}
+            onSubmit={handleSubmit(() => {})}
             className="grid grid-cols-3 gap-4"
           >
             <div>
@@ -203,14 +207,13 @@ const VocabPage = () => {
           <Column field="created_at" header="Created At" />
         </DataTable>
         {/* Use AddVocabDialog */}
-        {/* <AddVocabDialog
+        <AddVocabDialog
           visible={isDialogVisible}
           onHide={() => setDialogVisible(false)}
           onAddVocab={onAddVocab}
           classOptions={classOptions}
-          control={control}
           reset={reset}
-        /> */}
+        />
       </main>
     </div>
   );
