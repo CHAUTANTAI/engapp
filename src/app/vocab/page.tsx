@@ -7,7 +7,7 @@ import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
 import { Dropdown } from "primereact/dropdown";
 import { useForm, Controller } from "react-hook-form";
-import Header from "../../components/header";
+import Header from "../../components/layout/header/header";
 import AddVocabDialog from "./addNewVocabDialog";
 
 interface Vocab {
