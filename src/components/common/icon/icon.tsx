@@ -21,6 +21,7 @@ export const Icon = ({
   wrapperClassName = "",
   onClickWrapper,
 }: IconProps) => {
+  console.log(color);
   const icons = {
     arrowDown: (
       <svg
@@ -190,7 +191,12 @@ export const Icon = ({
   };
 
   return (
-    <div className={`${wrapperClassName} ${onClickWrapper ? 'cursor-pointer' : ''}`} onClick={onClickWrapper}>
+    <div
+      className={`${wrapperClassName} ${
+        onClickWrapper ? "cursor-pointer" : ""
+      }`}
+      onClick={onClickWrapper}
+    >
       {icons[name]}
     </div>
   );

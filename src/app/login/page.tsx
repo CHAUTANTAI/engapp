@@ -1,12 +1,7 @@
 "use client";
-
-import { useRouter } from "next/navigation";
-import { useMasterDataStore } from "../../store/master-data";
 import Image from "next/image";
 
 const Login = () => {
-  const { getSession } = useMasterDataStore();
-  const router = useRouter();
   return (
     <>
       <div className="flex flex-grow p-10 w-full h-full bg-[#ffffff]">
