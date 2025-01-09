@@ -28,7 +28,7 @@ export default function RootLayout({
 }>) {
   const { session } = useMasterDataStore();
   const pathName = usePathname();
-  if (session === true && pathName !== "/login") {
+  if (session === false && pathName !== "/login") {
     redirect("/login");
   }
 
