@@ -27,14 +27,14 @@ export const CustomText = ({
       weight === "semibold"
         ? 600
         : weight === "normal"
-          ? 400
-          : weight === "bold"
-            ? 700
-            : weight === "medium"
-              ? 500
-              : weight === "extrabold"
-                ? 800
-                : undefined,
+        ? 400
+        : weight === "bold"
+        ? 700
+        : weight === "medium"
+        ? 500
+        : weight === "extrabold"
+        ? 800
+        : undefined,
     fontSize: `${size}px`,
     position: "relative" as const,
     opacity: textOpacity,

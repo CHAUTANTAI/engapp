@@ -1,12 +1,11 @@
 // src/app/layout.tsx
 "use client";
-import '../styles/custom-css/index.scss'; 
+import "../styles/custom-css/index.scss";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "../components/layout/header/header";
 import { Footer } from "../components/layout/footer/footer";
-import { useEffect } from "react";
-import { useRouter, usePathname } from "next/navigation";
+import { usePathname, redirect } from "next/navigation";
 import { useMasterDataStore } from "../store/master-data";
 
 // Import metadata từ một file khác
@@ -28,17 +27,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   const { session } = useMasterDataStore();
-  const router = useRouter();
   const pathName = usePathname();
-
-  useEffect(() => {
-    if (session === false) {
-      //redirect to login page
-      router.push("/login");
-      console.log(router);
-      
-    }
-  }, [session, router]);
+  if (session === true && pathName !== "/login") {
+    redirect("/login");
+  }
 
   return (
     <html lang="en">
@@ -62,3 +54,13 @@ export default function RootLayout({
     </html>
   );
 }
+
+// useEffect(() => {
+//   if (session === false) {
+//     //redirect to login page
+//     router.push("/login");
+//     console.log(router);
+
+//   }
+//   setIsSessionChecked(true);
+// }, [session, router]);
