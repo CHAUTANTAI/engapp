@@ -18,13 +18,30 @@ const Login = () => {
               height={0}
               className="rounded-3xl shadow-custom w-full ssm-under:w-[250px] ssm-under: my-5"
               layout="intrinsic"
-              alt={"PHoTO"}
+              alt={"Avatar"}
             />
           </div>
         </div>
-        <div className="bg-blue-500 w-full">
-          <FormWrapper onSubmit={() => {}}>
-            <InputControl name="test" />
+        <div className="w-full">
+          <FormWrapper onSubmit={() => {}} className="login-form">
+            <div className="center-container">
+              <div className="input-label-block">
+                <div className="input-label">User name</div>
+                <InputControl
+                  name="username"
+                  className="input-styles"
+                  placeholder="Enter your name"
+                />
+              </div>
+              <div className="input-label-block">
+                <div className="input-label">Password</div>
+                <InputControl
+                  name="password"
+                  className="input-styles"
+                  placeholder="Enter your password"
+                />
+              </div>
+            </div>
           </FormWrapper>
         </div>
       </div>

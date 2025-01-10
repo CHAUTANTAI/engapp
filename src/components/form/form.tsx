@@ -16,6 +16,7 @@ interface FormWrapperProps<T extends FieldValues> {
   onSubmit: SubmitHandler<T>; // Submit handler for the form
   defaultValues?: DefaultValues<T>; // Default values for the form fields
   validationSchema?: Resolver<T>; // Custom resolver for validation (optional)
+  className?: string;
 }
 
 const FormWrapper = <T extends FieldValues>({
@@ -23,6 +24,7 @@ const FormWrapper = <T extends FieldValues>({
   onSubmit,
   defaultValues,
   validationSchema,
+  className = '',
 }: FormWrapperProps<T>) => {
   // Create the form with useForm
   const methods: UseFormReturn<T> = useForm<T>({
@@ -35,15 +37,9 @@ const FormWrapper = <T extends FieldValues>({
       {/* Provide context for all form control components */}
       <form
         onSubmit={methods.handleSubmit(onSubmit)}
-        className="w-full max-w-md mx-auto p-6 bg-white shadow-md rounded-lg"
+        className={`${className}`}
       >
-        {children} {/* Render control components here */}
-        <button
-          type="submit"
-          className="w-full py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
-        >
-          Submit
-        </button>
+        {children}
       </form>
     </FormProvider>
   );
