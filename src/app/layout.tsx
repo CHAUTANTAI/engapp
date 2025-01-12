@@ -10,6 +10,7 @@ import { useMasterDataStore } from "../store/master-data";
 
 // Import metadata từ một file khác
 import { metadata } from "./metadata"; // Thêm dòng này để import metadata
+import { ROUTER } from "../const/routers";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -28,10 +29,11 @@ export default function RootLayout({
 }>) {
   const { session } = useMasterDataStore();
   const pathName = usePathname();
-  if (session === false && pathName !== "/login") {
-    redirect("/login");
+  if (session === false) {
+    if (!pathName?.includes(ROUTER.AUTH)) {
+      redirect(ROUTER.LOGIN);
+    }
   }
-
   return (
     <html lang="en">
       <head>
@@ -41,7 +43,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}
       >
-        {pathName !== "/login" ? (
+        {pathName !== ROUTER.LOGIN && pathName !== ROUTER.REGISTER ? (
           <>
             <Header />
             {children}
@@ -54,13 +56,3 @@ export default function RootLayout({
     </html>
   );
 }
-
-// useEffect(() => {
-//   if (session === false) {
-//     //redirect to login page
-//     router.push("/login");
-//     console.log(router);
-
-//   }
-//   setIsSessionChecked(true);
-// }, [session, router]);
