@@ -3,6 +3,7 @@ import Image from "next/image";
 import { Label } from "../../components/common/component/label";
 import { useLoginStore } from "../../store/login-store";
 import { redirect } from "next/navigation";
+import { Button } from "../../components/common/button/button";
 
 const LoginLayout = ({
   children,
@@ -24,15 +25,15 @@ const LoginLayout = ({
             />
           </div>
         </div>
-        <div className="w-1/2 login-form-wrapper flex flex-col justify-center">
+        <div className="w-1/2 login-form-wrapper flex flex-col justify-center ssm-under:w-full">
           <div className="center-container">
             <Label
               label="Welcome to CTT ENG WEB"
-              additionalClassName="text-center text-[1.5rem] font-bold"
+              additionalClassName="text-center text-[1.5rem] font-bold "
             />
             <div className="w-full flex justify-center my-6">
               <div className="wrapper-button-group">
-                <input
+                <Button
                   type="button"
                   className={`${
                     mode === 1 ? "button-styles" : "button-blurred-styles"
@@ -43,7 +44,7 @@ const LoginLayout = ({
                     redirect("./login");
                   }}
                 />
-                <input
+                <Button
                   type="button"
                   className={`${
                     mode === 2 ? "button-styles" : "button-blurred-styles"
@@ -57,7 +58,6 @@ const LoginLayout = ({
               </div>
             </div>
             <div className="mb-8">
-              {" "}
               <Label
                 label="Continue with the journey to conquer 990 TOEIC NOW!"
                 additionalClassName="text-center text-[#5B5B5B]"

@@ -122,6 +122,10 @@
     transform: scale(0.9);
 }
 
+.label-link:not(:active):hover {
+    color: #000;
+}
+
 .button-primary-event:hover {
     background-color: rgb(66, 167, 168) !important;
 }
@@ -147,6 +151,10 @@
     border-radius: 40px;
     transition: background-color 0.3s ease;
     cursor: pointer;
+
+    @media (max-width: 430px) {
+        min-width: 100px;
+    }
 }
 
 .button-blurred-styles {
