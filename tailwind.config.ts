@@ -13,7 +13,7 @@ export default {
         foreground: "var(--foreground)",
       },
       screens: {
-        "ssm-under": { max: "430px" },
+        "ssm-under": { max: "630px" },
       },
     },
   },
