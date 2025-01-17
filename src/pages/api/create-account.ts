@@ -19,7 +19,7 @@ const createAccount = async (req: NextApiRequest, res: NextApiResponse) => {
     ]);
 
     if (result.command === "CALL") {
-      return res.status(200).json({ message: "Account created successfully!" });
+      return res.status(201).json({ message: "Account created successfully!" });
     } else {
       return res
         .status(500)

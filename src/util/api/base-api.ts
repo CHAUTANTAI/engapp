@@ -36,8 +36,6 @@ const createAPI = async <T>({
     return response as BaseResponse<T>;
   } catch (error: unknown) {
     if (axios.isAxiosError(error) && error.response) {
-      console.log("========:>", error.response);
-      
       // server error (status code 4xx, 5xx)
       throw new Error(
         error.response.data?.message || "An error occurred on the server"
