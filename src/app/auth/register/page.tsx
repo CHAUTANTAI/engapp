@@ -1,12 +1,12 @@
 "use client";
-import { useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useLoginStore } from "../../../store/login-store";
-import { Label } from "../../../components/common/component/label";
 import { InputControl } from "../../../components/common/control/inputControl";
 import FormWrapper from "../../../components/form/form";
-import { loginSchema } from "../../../schema/login-schema";
-import { Checkbox } from "../../../components/common/control/checkboxControl";
+import { loginSchema, LoginSchemaType } from "../../../schema/login-schema";
+import { useState } from "react";
+import createAPI from "../../../util/api/base-api";
 
 const Register = () => {
   const { mode } = useLoginStore();
@@ -14,26 +14,61 @@ const Register = () => {
     resolver: zodResolver(loginSchema),
     mode: "onChange",
     defaultValues: {
-      userName: "",
+      email: "",
       password: "",
       rememberMe: true,
     },
   });
 
-  // const onSubmit = (data: any) => {
-  //   console.log(data);
-  //   alert("SUBMIT:", data);
-  // };
-  
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+
+  const onSubmit: SubmitHandler<LoginSchemaType> = async (data) => {
+    setIsLoading(true);
+    setError(null);
+    setSuccessMessage(null);
+
+    try {
+      const response = await createAPI({
+        method: "POST",
+        url: "create-account",
+        body: {
+          email: data.email, // Ensure field names match the API
+          password: data.password,
+          rule_id: 2, // Assuming the rule is "User" for registration
+        },
+      });
+
+      console.log(response.data);
+      if (response.status === 201) {
+        setSuccessMessage("Account created successfully!");
+        methods.reset(); // Reset form after successful account creation
+      } else {
+        setError("Error creating account");
+      }
+      // Optionally, reset form here if needed:
+      methods.reset();
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError("An unknown error occurred");
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <>
-      <FormWrapper onSubmit={() => {}} className="login-form" methods={methods}>
+      <FormWrapper onSubmit={onSubmit} className="login-form" methods={methods}>
         <div className="input-label-block">
-          <div className="input-label">Username</div>
+          <div className="input-label">Email</div>
           <InputControl
-            name="userName"
+            name="email"
             className="input-styles"
-            placeholder="Enter your name"
+            placeholder="Enter your email"
             required={true}
           />
         </div>
@@ -47,21 +82,17 @@ const Register = () => {
             required
           />
         </div>
-        <div className="flex flex-row justify-between">
-          <Checkbox
-            controlProps={{
-              name: "rememberMe",
-            }}
-            labelProps={{
-              label: "Remember Me",
-            }}
-          />
-          <Label label="Forgot Password?" labelClassName="label-link" />
+
+        <div className="mt-4">
+          {error && <p className="text-red-500">{error}</p>}
+          {successMessage && <p className="text-green-500">{successMessage}</p>}
         </div>
+
         <input
           type="submit"
           className="button-styles !w-full mt-4"
           value={`${mode === 1 ? "Login" : "Register"}`}
+          disabled={isLoading}
         />
       </FormWrapper>
     </>

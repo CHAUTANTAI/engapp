@@ -1,25 +1,18 @@
-import mysql from "mysql2/promise"; // Importing promise-based version
+import { Pool } from "pg";
 
-// MySQL connection details
-const connection = mysql.createPool({
-  host: "sql12.freesqldatabase.com",
-  user: "sql12755723",
-  password: "fnw1rus6bW",
-  database: "sql12755723",
-  port: 3306,
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false },
 });
 
-// Check the connection using async/await
-async function checkConnection() {
+export const query = async (text: string, params?: (string | number)[]) => {
   try {
-    const conn = await connection.getConnection(); // Get a connection from the pool
-    console.log("Successfully connected to MySQL!");
-    conn.release(); // Release the connection back to the pool after use
-  } catch (err) {
-    console.error("Connection failed:", err);
+    const result = await pool.query(text, params);
+    return result;
+  } catch (error) {
+    console.error("Database query error:", error);
+    throw error;
   }
-}
+};
 
-checkConnection();
-
-export default connection; // Export the connection pool for use in other parts of your app
+export default pool;
