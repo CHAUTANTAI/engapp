@@ -38,7 +38,7 @@ export default function RootLayout({
 
   useEffect(() => {
     console.log("useEffect");
-    
+
     if (token && token === "OOO") {
       if (session === false) {
         getSession();
@@ -48,6 +48,7 @@ export default function RootLayout({
       redirect(ROUTER.LOGIN);
     }
   }, [token, pathName, getSession, session]);
+
   return (
     <html lang="en">
       <head>
@@ -60,7 +61,9 @@ export default function RootLayout({
         {pathName !== ROUTER.LOGIN && pathName !== ROUTER.REGISTER ? (
           <>
             <Header />
-            {children}
+            <div className="bg-white w-full min-h-[calc(100vh-197px)] ssm-under:min-h-[calc(100vh-173px)]">
+              {children}
+            </div>
             <Footer />
           </>
         ) : (

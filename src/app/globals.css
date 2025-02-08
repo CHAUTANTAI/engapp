@@ -5,6 +5,9 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --primary: rgba(73, 187, 189, 1);
+  --primary-active: rgba(55, 155, 155, 0.8);
+  --sidebar: rgba(157, 204, 255, 1);
 }
 
 @media (prefers-color-scheme: dark) {

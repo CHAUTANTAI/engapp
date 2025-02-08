@@ -1,43 +1,107 @@
-// app/components/Header.tsx
+import { useState, useEffect } from "react";
+import { Menubar } from "primereact/menubar";
+import { Sidebar } from "primereact/sidebar";
+import { Button } from "../../common/button/button";
+import { MenuItem } from "primereact/menuitem";
+import { Icon } from "../../common/icon/icon";
 
-"use client";
-import Link from "next/link";
+export default function ResponsiveHeader() {
+  const [visible, setVisible] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [activeItem, setActiveItem] = useState("Home");
 
-interface LogoProps {
-  color?: string;
-}
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
 
-export const Logo = ({ color = "black" }: LogoProps) => {
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const items: MenuItem[] = [
+    { label: "Home" },
+    { label: "Dashboard" },
+    { label: "Account" },
+  ];
+
   return (
-    <div
-      className={`font-poppins text-[24px] font-bold`}
-      style={{ color: color }}
-    >
-      CTT
+    <div className="relative">
+      {isMobile ? (
+        <div className="flex items-center p-3 bg-[var(--primary)] text-white gap-x-2">
+          <Icon
+            name="bars"
+            onClickWrapper={() => {
+              setVisible(true);
+            }}
+          />
+          <Button
+            type="button"
+            onClick={() => {
+              setVisible(true);
+            }}
+            className="mr-2 text-white font-bold text-[1rem] "
+            value={"ENG APP"}
+          />
+        </div>
+      ) : (
+        <Menubar
+          start={() => (
+            <div className="text-white text-[2rem] font-bold absolute top-4 left-5">
+              ENG APP
+            </div>
+          )}
+          model={items.map((item) => {
+            return {
+              ...item,
+              className: `text-white font-bold text-[1rem] px-8 py-4 rounded-full scale-animation-active ${
+                activeItem === item.label ? "button-primary-active" : ""
+              }`,
+              command: () => setActiveItem(item.label || ""),
+            };
+          })}
+          className="py-3 flex items-center justify-center bg-[var(--primary)] w-full"
+        />
+      )}
+
+      {/* Sidebar cho mobile */}
+      <Sidebar
+        visible={visible}
+        onHide={() => {
+          setVisible(false);
+        }}
+        className="bg-white rounded-tr-3xl rounded-br-3xl"
+        header={() => (
+          <div className="text-[rgba(30,108,153,1)] text-[2rem] font-bold flex items-center justify-center bg-[#1e6c994b] w-full border-b-2 border-blue-100 rounded-tr-3xl">
+            ENG APP
+          </div>
+        )}
+        showCloseIcon={false}
+      >
+        <ul className="list-none py-4">
+          {items.map((item, index) => (
+            <>
+              <li
+                key={index}
+                className={`pr-4 py-3 flex items-center font-bold text-[rgba(30,108,153,1)] scale-animation-active
+                        ${
+                          activeItem === item.label
+                            ? "justify-center text-[1.5rem] pr-24 text-[rgb(30,140,170)]"
+                            : "pl-8 text-[1rem]"
+                        }`}
+                onClick={() => {
+                  setActiveItem(item.label || "");
+                  setVisible(false);
+                }}
+              >
+                {item.label}
+              </li>
+              <div className="border-b-2 border-gray-100 w-full"></div>
+            </>
+          ))}
+        </ul>
+      </Sidebar>
     </div>
   );
-};
-
-const Header = () => {
-  return (
-    <header className="bg-gray-800 text-white p-4">
-      <nav className="flex justify-between items-center">
-        <div className="text-xl font-bold">
-          <Link href="/" className="hover:text-gray-400">
-            ENG APP
-          </Link>
-        </div>
-        <div className="space-x-6">
-          <Link href="/vocab" className="hover:text-gray-400">
-            Vocab
-          </Link>
-          <Link href="/practise" className="hover:text-gray-400">
-            Practise
-          </Link>
-        </div>
-      </nav>
-    </header>
-  );
-};
-
-export default Header;
+}

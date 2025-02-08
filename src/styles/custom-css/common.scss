@@ -17,3 +17,16 @@
   align-items: center;
   justify-content: center;
 }
+
+.button-primary-active {
+  background: rgba(55, 155, 155, 0.8);
+}
+
+.scale-animation-active {
+  transition: transform 0.3s ease;
+  cursor: pointer;
+}
+
+.scale-animation-active:active {
+  transform: scale(0.9);
+}

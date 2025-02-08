@@ -52,7 +52,7 @@ const Login = () => {
             setAuthCookie({ token: "OOO" });
           }
           hideSpinner();
-          redirectScreen(ROUTER.VOCAB);
+          redirectScreen(ROUTER.INIT);
         } else {
           hideSpinner();
           console.log("Server Error!");

@@ -1,5 +1,5 @@
 export enum ROUTER {
-  INIT = "",
+  INIT = "/",
   AUTH = "/auth",
   LOGIN = "/auth/login",
   REGISTER = "/auth/register",
