@@ -4,14 +4,14 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useLoginStore } from "../../../store/login-store";
 import { InputControl } from "../../../components/common/control/inputControl";
 import FormWrapper from "../../../components/form/form";
-import { loginSchema, LoginSchemaType } from "../../../schema/login-schema";
+import { AuthSchema, AuthSchemaType } from "../../../schema/login-schema";
 import { useState } from "react";
-import createAPI from "../../../util/api/base-api";
+import AuthService from "../../../services/auth-service";
 
 const Register = () => {
   const { mode } = useLoginStore();
   const methods = useForm({
-    resolver: zodResolver(loginSchema),
+    resolver: zodResolver(AuthSchema),
     mode: "onChange",
     defaultValues: {
       email: "",
@@ -24,31 +24,25 @@ const Register = () => {
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  const onSubmit: SubmitHandler<LoginSchemaType> = async (data) => {
+  const onSubmit: SubmitHandler<AuthSchemaType> = async (data) => {
     setIsLoading(true);
     setError(null);
     setSuccessMessage(null);
 
     try {
-      const response = await createAPI({
-        method: "POST",
-        url: "create-account",
-        body: {
-          email: data.email, // Ensure field names match the API
-          password: data.password,
-          rule_id: 2, // Assuming the rule is "User" for registration
-        },
-      });
+      const body: AuthSchemaType = {
+        email: data.email,
+        password: data.password,
+        rule_id: 2,
+      };
+      const response = await AuthService.createAccount(body);
 
-      console.log(response.data);
       if (response.status === 201) {
         setSuccessMessage("Account created successfully!");
-        methods.reset(); // Reset form after successful account creation
+        methods.reset();
       } else {
         setError("Error creating account");
       }
-      // Optionally, reset form here if needed:
-      methods.reset();
     } catch (error: unknown) {
       if (error instanceof Error) {
         setError(error.message);

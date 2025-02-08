@@ -1,6 +1,6 @@
 "use client";
 
-import { useMasterDataStore } from "../store/master-data";
+import { useMasterDataStore } from "../store/master-data-store";
 
 const MainPage = () => {
   const { session } = useMasterDataStore();

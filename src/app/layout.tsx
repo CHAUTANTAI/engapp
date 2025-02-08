@@ -6,11 +6,14 @@ import "./globals.css";
 import Header from "../components/layout/header/header";
 import { Footer } from "../components/layout/footer/footer";
 import { usePathname, redirect } from "next/navigation";
-import { useMasterDataStore } from "../store/master-data";
+import { useMasterDataStore } from "../store/master-data-store";
 
-// Import metadata từ một file khác
-import { metadata } from "./metadata"; // Thêm dòng này để import metadata
+import { metadata } from "./metadata";
 import { ROUTER } from "../const/routers";
+import { LoadingDialog } from "../components/common/loading/loadingDialog";
+import { useCommonStore } from "../store/common-store";
+import { useAuthCookies } from "../hook/cookies";
+import { useEffect } from "react";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,13 +30,24 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { session } = useMasterDataStore();
+  const { session, getSession } = useMasterDataStore();
+  const { isLoading } = useCommonStore();
+  const { getAuthCookie } = useAuthCookies();
   const pathName = usePathname();
-  if (session === false) {
-    if (!pathName?.includes(ROUTER.AUTH)) {
+  const token = getAuthCookie()?.toString() || undefined;
+
+  useEffect(() => {
+    console.log("useEffect");
+    
+    if (token && token === "OOO") {
+      if (session === false) {
+        getSession();
+      }
+    } else if (!pathName?.includes(ROUTER.AUTH)) {
+      console.log("pathName:", pathName);
       redirect(ROUTER.LOGIN);
     }
-  }
+  }, [token, pathName, getSession, session]);
   return (
     <html lang="en">
       <head>
@@ -52,6 +66,7 @@ export default function RootLayout({
         ) : (
           <>{children}</>
         )}
+        {isLoading === true ? <LoadingDialog /> : null}
       </body>
     </html>
   );

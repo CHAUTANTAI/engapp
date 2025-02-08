@@ -8,7 +8,9 @@ interface MasterDataStore {
 export const getSession = () => {
     try {
         useMasterDataStore.setState({session: true});
-    } catch {}
+    } catch {
+      useMasterDataStore.setState({session: false});
+    }
 }
 
 export const useMasterDataStore = create<MasterDataStore>(() => ({

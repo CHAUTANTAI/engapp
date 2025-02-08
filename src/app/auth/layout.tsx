@@ -4,7 +4,6 @@ import { Label } from "../../components/common/component/label";
 import { useLoginStore } from "../../store/login-store";
 import { redirect } from "next/navigation";
 import { Button } from "../../components/common/button/button";
-
 const LoginLayout = ({
   children,
 }: Readonly<{
@@ -40,8 +39,10 @@ const LoginLayout = ({
                   }`}
                   value={"Login"}
                   onClick={() => {
-                    useLoginStore.setState({ mode: 1 });
-                    redirect("./login");
+                    if (useLoginStore.getState().mode !== 1) {
+                      useLoginStore.setState({ mode: 1 });
+                      redirect("./login");
+                    }
                   }}
                 />
                 <Button
@@ -51,8 +52,10 @@ const LoginLayout = ({
                   }`}
                   value={"Register"}
                   onClick={() => {
-                    useLoginStore.setState({ mode: 2 });
-                    redirect("./register");
+                    if (useLoginStore.getState().mode !== 2) {
+                      useLoginStore.setState({ mode: 2 });
+                      redirect("./register");
+                    }
                   }}
                 />
               </div>

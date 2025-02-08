@@ -1,7 +1,7 @@
 // src/util/api/base-api.ts
 import axios, { AxiosRequestConfig } from "axios";
 
-interface BaseResponse<T> {
+export interface BaseResponse<T = void> {
   status: number;
   data: T | null;
 }
