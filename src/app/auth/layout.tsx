@@ -12,7 +12,7 @@ const LoginLayout = ({
   const { mode } = useLoginStore();
   return (
     <>
-      <div className="flex p-10 w-full min-h-screen bg-[#ffffff] ssm-under:flex ssm-under:flex-col">
+      <div className="flex p-10 w-full min-h-screen bg-[#ffffff] ssm-under:flex-col">
         <div className="w-1/2 flex items-center justify-center ssm-under:w-full">
           <div className="rounded-3xl flex items-center justify-center">
             <Image

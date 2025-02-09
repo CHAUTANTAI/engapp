@@ -2,13 +2,15 @@ import { useState, useEffect } from "react";
 import { Menubar } from "primereact/menubar";
 import { Sidebar } from "primereact/sidebar";
 import { Button } from "../../common/button/button";
-import { MenuItem } from "primereact/menuitem";
 import { Icon } from "../../common/icon/icon";
+import { useRouteControl } from "../../../hook/routeControl";
+import { ROUTER } from "../../../const/routers";
 
 export default function ResponsiveHeader() {
   const [visible, setVisible] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [activeItem, setActiveItem] = useState("Home");
+  const { redirectScreen } = useRouteControl();
 
   useEffect(() => {
     const handleResize = () => {
@@ -20,11 +22,25 @@ export default function ResponsiveHeader() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const items: MenuItem[] = [
-    { label: "Home" },
-    { label: "Dashboard" },
-    { label: "Account" },
+  const items = [
+    { label: "Home", route: ROUTER.HOME },
+    { label: "Dashboard", route: ROUTER.VOCAB },
+    { label: "Account", route: ROUTER.ACCOUNT },
   ];
+
+  const handleOnClickItem = (
+    route: ROUTER,
+    label: string,
+    additionalAction?: () => void
+  ) => {
+    if (activeItem !== label) {
+      setActiveItem(label || "Home");
+      redirectScreen(route);
+      if (additionalAction) {
+        additionalAction();
+      }
+    }
+  };
 
   return (
     <div className="relative">
@@ -58,7 +74,9 @@ export default function ResponsiveHeader() {
               className: `text-white font-bold text-[1rem] px-8 py-4 rounded-full scale-animation-active ${
                 activeItem === item.label ? "button-primary-active" : ""
               }`,
-              command: () => setActiveItem(item.label || ""),
+              command: () => {
+                handleOnClickItem(item.route, item.label);
+              },
             };
           })}
           className="py-3 flex items-center justify-center bg-[var(--primary)] w-full"
@@ -81,9 +99,8 @@ export default function ResponsiveHeader() {
       >
         <ul className="list-none py-4">
           {items.map((item, index) => (
-            <>
+            <div key={index}>
               <li
-                key={index}
                 className={`pr-4 py-3 flex items-center font-bold text-[rgba(30,108,153,1)] scale-animation-active
                         ${
                           activeItem === item.label
@@ -91,14 +108,13 @@ export default function ResponsiveHeader() {
                             : "pl-8 text-[1rem]"
                         }`}
                 onClick={() => {
-                  setActiveItem(item.label || "");
-                  setVisible(false);
+                  handleOnClickItem(item.route, item.label, () => setVisible(false));
                 }}
               >
                 {item.label}
               </li>
               <div className="border-b-2 border-gray-100 w-full"></div>
-            </>
+            </div>
           ))}
         </ul>
       </Sidebar>

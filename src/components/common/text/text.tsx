@@ -5,7 +5,7 @@ export interface CustomTextProps {
   weight?: "semibold" | "normal" | "bold" | "medium" | "extrabold";
   text?: string;
   textOpacity?: number;
-  color?: "black" | "white" | "text";
+  color?: "black" | "white" | "primary";
   underline?: boolean;
   underlineColor?: string;
   underlineOpacity?: number;
