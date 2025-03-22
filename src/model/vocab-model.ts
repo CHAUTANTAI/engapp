@@ -9,7 +9,8 @@ export interface VocabModel {
   example?: string;
   create_at: string;
   update_at: string;
-  class_name: string;
+  class_names: string;
+  class_ids: string;
   class_abbreviation: string;
   account_id: number;
 }

@@ -8,17 +8,16 @@
         .cs-header {
             background-color: var(--color-primary);
             color: white;
-            border: 1.5px solid white;
         }
 
         .cs-header-first {
-            border: 1px solid white;
             border-radius: 5px 0px 0px 5px;
+            background-clip: unset;
         }
 
         .cs-header-last {
-            border: 1px solid white;
             border-radius: 0px 5px 5px 0px;
+            background-clip: unset;
         }
     }
 
@@ -27,6 +26,10 @@
         border: 1.5px solid white;
         padding: 8px;
         text-align: left;
+    }
+
+    .cs-cell {
+        padding-inline: 1rem !important;
     }
 
     .cs-table tbody tr:nth-child(odd) {

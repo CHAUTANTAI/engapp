@@ -111,6 +111,7 @@ const VocabScreen = () => {
           <Column
             header="Actions"
             headerClassName="cs-header cs-header-first"
+            className="cs-cell"
             alignHeader={"center"}
             body={renderActionColumn}
           />
@@ -118,18 +119,21 @@ const VocabScreen = () => {
             field="word"
             header="Word"
             headerClassName="cs-header"
+            className="cs-cell"
             sortable
           />
           <Column
             field="ipa"
             header="IPA"
             headerClassName="cs-header"
+            className="cs-cell"
             alignHeader={"center"}
           />
           <Column
-            field="class_abbreviation"
+            field="class_names"
             header="Class"
             headerClassName="cs-header"
+            className="cs-cell"
             alignHeader={"center"}
             sortable
             filter
@@ -138,6 +142,7 @@ const VocabScreen = () => {
             field="meaning"
             header="Meaning"
             headerClassName="cs-header"
+            className="cs-cell"
             alignHeader={"center"}
             sortable
           />
@@ -145,6 +150,7 @@ const VocabScreen = () => {
             field="example"
             header="Example"
             headerClassName="cs-header cs-header-last"
+            className="cs-cell"
             alignHeader={"center"}
             body={(rowData) => (
               <span className="italic">{rowData.example || "--"}</span>
