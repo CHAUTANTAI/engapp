@@ -16,6 +16,7 @@
   --color-orange-focus: rgb(255, 153, 0);
   --color-link: rgb(255, 0, 0);
   --color-link-active: rgb(4, 0, 255);
+  --color-red-active: rgb(255, 0, 0);
   --color-orange-hover: rgba(255, 153, 0, 0.2);
   --padding-center-pc: 300px;
   --padding-center-mobile: 10px;
