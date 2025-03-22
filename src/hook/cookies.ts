@@ -17,9 +17,17 @@ export const useAuthCookies = () => {
     return Cookies.get("auth_token") || null;
   };
 
+  const getAccountIdCookie = () => {
+    return Cookies.get("account_id") || null;
+  };
+
+  const setAccountIdCookie = (account_id: number) => {
+    Cookies.set("account_id", account_id.toString(), { expires: 7, path: "/" });
+  };
+
   const removeAuthCookie = () => {
     Cookies.remove("auth_token", { path: "/" });
   };
 
-  return { setAuthCookie, getAuthCookie, removeAuthCookie };
+  return { setAuthCookie, getAuthCookie, removeAuthCookie, getAccountIdCookie, setAccountIdCookie };
 };

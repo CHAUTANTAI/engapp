@@ -40,11 +40,11 @@ const DashboardLayout = ({
           return (
             <div
               key={index}
-              className={`flex flex-row items-center justify-center bg-[var(--color-primary-light)] rounded-sm scale-animation-active
+              className={`flex flex-row items-center justify-center bg-[var(--color-primary-light)] rounded-sm scale-animation-active text-white
                 ${
                   activeItem === item.label
-                    ? "w-[195px] h-[60px] bg-[var(--color-primary)] "
-                    : "w-[175px] h-[50px]"
+                    ? "w-[175px] h-[50px] bg-[var(--color-primary)] "
+                    : "w-[155px] h-[40px]"
                 }`}
               style={{
                 clipPath: "polygon(25% 0%, 100% 0%, 75% 100%, 0% 100%)",

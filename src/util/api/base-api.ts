@@ -9,8 +9,9 @@ export interface BaseResponse<T = void> {
 interface APIProps {
   method: "GET" | "POST" | "PUT" | "DELETE";
   url: string;
-  body?: Record<string, unknown>;
-  params?: Record<string, unknown>;
+  body?: unknown;
+  // params?: Record<string, unknown>;
+  params?: unknown;
 }
 // axios config
 const createAPI = async <T>({

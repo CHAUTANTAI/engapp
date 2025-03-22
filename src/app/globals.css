@@ -1,6 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+@import "primeicons/primeicons.css";
 
 :root {
   --background: #ffffff;
@@ -9,8 +10,13 @@
   --primary: rgba(73, 187, 189, 1);
   --color-primary: rgba(73, 187, 189, 1);
   --color-primary-light: rgb(90, 220, 223);
-  --primary-active: rgba(55, 155, 155, 0.8);
+  --color-primary-light-dim: rgba(90, 220, 223, 0.15);
+  --color-primary-active: rgba(55, 155, 155, 0.8);
   --sidebar: rgba(157, 204, 255, 1);
+  --color-orange-focus: rgb(255, 153, 0);
+  --color-link: rgb(255, 0, 0);
+  --color-link-active: rgb(4, 0, 255);
+  --color-orange-hover: rgba(255, 153, 0, 0.2);
   --padding-center-pc: 300px;
   --padding-center-mobile: 10px;
 }

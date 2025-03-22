@@ -1,5 +1,5 @@
 "use client";
-import { InputControl } from "../../../components/common/control/inputControl";
+import { InputControl } from "../../../components/common/control/input/inputControl";
 import FormWrapper from "../../../components/form/form";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -15,6 +15,7 @@ import { useRouteControl } from "../../../hook/routeControl";
 import { ROUTER } from "../../../const/routers";
 import { useMasterDataStore } from "../../../store/master-data-store";
 import { useAuthCookies } from "../../../hook/cookies";
+import { useAuthStore } from "../../../store/auth-store";
 
 const Login = () => {
   const { mode } = useLoginStore();
@@ -22,7 +23,8 @@ const Login = () => {
   const { showSpinner, hideSpinner } = useCommonStore();
   const { redirectScreen } = useRouteControl();
   const { session } = useMasterDataStore();
-  const { setAuthCookie } = useAuthCookies();
+  const { setAuthCookie, setAccountIdCookie } = useAuthCookies();
+  const {} = useAuthStore();
   const methods = useForm({
     resolver: zodResolver(AuthSchema),
     mode: "onChange",
@@ -44,20 +46,23 @@ const Login = () => {
         password: data.password,
         rule_id: 2,
       };
-      setTimeout(async () => {
-        const response = await AuthService.login(body);
-        if (response.status === 200) {
-          setError("Login Success!");
-          if (!session) {
-            setAuthCookie({ token: "OOO" });
+      const response = await AuthService.login(body);
+      if (response.status === 200) {
+        setError("Login Success!");
+        console.log("response.data:", response.data);
+
+        useAuthStore.setState({ accountData: response.data });
+        if (!session) {
+          setAuthCookie({ token: "OOO" });
+          if (response.data) {
+            setAccountIdCookie(response.data.account_id);
           }
-          hideSpinner();
-          redirectScreen(ROUTER.HOME);
-        } else {
-          hideSpinner();
-          console.log("Server Error!");
         }
-      }, 3000);
+        hideSpinner();
+        redirectScreen(ROUTER.HOME);
+      } else {
+        setError("Server Error!");
+      }
     } catch (error: unknown) {
       if (error instanceof Error) {
         setError(error.message);
@@ -65,7 +70,7 @@ const Login = () => {
         setError("An unknown error occurred");
       }
     } finally {
-      // hideSpinner();
+      hideSpinner();
     }
   };
 

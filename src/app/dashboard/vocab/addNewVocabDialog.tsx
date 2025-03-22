@@ -1,190 +1,159 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-"use client";
-import { FC } from "react";
 import { Dialog } from "primereact/dialog";
-import { Button } from "primereact/button";
-import { InputText } from "primereact/inputtext";
-import { Dropdown } from "primereact/dropdown";
-import { useForm, Controller } from "react-hook-form";
+import FormWrapper from "../../../components/form/form";
+import { useForm } from "react-hook-form";
+import { VocabSchema, VocabSchemaType } from "../../../schema/vocab-schema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { InputControl } from "../../../components/common/control/input/inputControl";
+import { Button } from "../../../components/common/button/button";
+import { useEffect } from "react";
+import { useClassStore } from "../../../store/class-store";
+import { CheckboxGroupControl } from "../../../components/common/control/checkboxGroupControl";
+import { VocabService } from "../../../services/vocab-service";
+import { useAuthStore } from "../../../store/auth-store";
+import { CreateVocabReqModel } from "../../../model/vocab-model";
 
-interface AddVocabDialogProps {
+interface AddNewVocabDialogProps {
   visible: boolean;
   onHide: () => void;
-  onAddVocab: (data: any) => void; // Function to handle the add vocab action
-  classOptions: any[];
-  reset: () => void;
 }
 
-const AddVocabDialog: FC<AddVocabDialogProps> = ({
+export const AddNewVocabDialog: React.FC<AddNewVocabDialogProps> = ({
   visible,
   onHide,
-  onAddVocab,
-  classOptions,
 }) => {
-  // Create new useForm for the add vocab form
-  const { control, handleSubmit, reset: resetForm } = useForm();
+  const { getClasses, classes_data } = useClassStore();
+  const { accountData } = useAuthStore();
+  const methods = useForm({
+    resolver: zodResolver(VocabSchema),
+    mode: "onChange",
+    defaultValues: {
+      word: "",
+      meaning: "",
+      ipa: "",
+      stress: 0,
+      example: "",
+      class_id: [],
+    },
+  });
 
-  //handle call api add new vocab
-  const addNewVocabService = async (data: any) => {
+  const wordValue = methods.watch("word");
+  const stressValue = methods.watch("stress");
+
+  const setSelectedStressIndex = (index: number) => {
+    console.log(stressValue);
+    methods.setValue("stress", index);
+  };
+
+  useEffect(() => {
+    methods.setValue("stress", 0);
+  }, [wordValue]);
+
+  const onSubmit = async (data: VocabSchemaType) => {
     try {
-      // Gọi API POST để thêm vocab mới vào DB
-      const response = await fetch("/api/vocab", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
+      if (accountData) {
+        const payload: CreateVocabReqModel = {
+          word: data.word,
+          meaning: data.meaning,
+          ipa: data.ipa,
+          stress: data.stress,
+          example: data.example,
+          class_ids: data.class_id,
+          account_id: accountData.account_id,
+        };
 
-      if (response.ok) {
-        // Nếu thêm vocab thành công
-        alert("Vocab added successfully");
-        resetForm(); // Reset the form after submission
-        onHide(); // Close the dialog after submission
-      } else {
-        // Nếu có lỗi khi thêm vocab
-        const errorData = await response.json();
-        alert(`Error: ${errorData.error}`);
+        console.log("Submitting data:", payload);
+        const response = await VocabService.createVocab(payload);
+        console.log("Response:", response);
+
+        if (response.status === 201) {
+          alert("Vocab created successfully!");
+          onHide();
+          methods.reset();
+        } else {
+        }
       }
     } catch (error) {
-      console.error("Error during adding vocab:", error);
-      alert("An unexpected error occurred while adding the vocab");
+      console.error("Error submitting vocab:", error);
+      alert(
+        error instanceof Error ? error.message : "An unexpected error occurred"
+      );
     }
   };
 
-  // Submit handler for the form
-  const onSubmit = (data: any) => {
-    // Call the passed down onAddVocab function from parent component
-    onAddVocab(data);
-    addNewVocabService(data);
-    resetForm(); // Reset the form after submission
-    onHide(); // Close the dialog after submission
+  const handleInit = async () => {
+    await getClasses();
   };
+
+  useEffect(() => {
+    if (visible) {
+      handleInit();
+    } else {
+      methods.reset();
+    }
+  }, [visible]);
+
+  console.log(methods.getValues("class_id"));
 
   return (
     <Dialog
-      header="Add New Vocab"
       visible={visible}
-      style={{ width: "50vw" }}
       onHide={onHide}
-      className="rounded-lg shadow-xl p-6 bg-gray-800 text-white"
+      className="cs-dialog shadow-custom"
+      closeIcon={
+        <i className="pi pi-times text-red-500 text-2xl font-bold z-10"></i>
+      }
+      header={
+        <div className="relative shadow-lg z-10">
+          <div className="flex flex-row items-center justify-center title">
+            ADD NEW VOCAB
+          </div>
+        </div>
+      }
     >
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        {/* Vocab Field */}
-        <div>
-          <span className="p-float-label">
-            <Controller
-              name="vocab"
-              control={control}
-              render={({ field }) => (
-                <InputText
-                  id="vocab"
-                  {...field}
-                  className="w-full bg-gray-700 text-white border-gray-600"
-                />
-              )}
-            />
-            <label htmlFor="vocab">Vocab</label>
-          </span>
-        </div>
-
-        {/* Class Field */}
-        <div>
-          <span className="p-float-label">
-            <Controller
-              name="class_id"
-              control={control}
-              render={({ field }) => (
-                <Dropdown
-                  id="class"
-                  value={field.value}
-                  options={classOptions}
-                  onChange={(e) => field.onChange(e.value)}
-                  optionLabel="label"
-                  optionValue="value"
-                  className="w-full bg-gray-700 text-white border-gray-600"
-                />
-              )}
-            />
-            <label htmlFor="class">Class</label>
-          </span>
-        </div>
-
-        {/* Meaning Field */}
-        <div>
-          <span className="p-float-label">
-            <Controller
-              name="meaning"
-              control={control}
-              render={({ field }) => (
-                <InputText
-                  id="meaning"
-                  {...field}
-                  className="w-full bg-gray-700 text-white border-gray-600"
-                />
-              )}
-            />
-            <label htmlFor="meaning">Meaning</label>
-          </span>
-        </div>
-
-        {/* Example Field */}
-        <div>
-          <span className="p-float-label">
-            <Controller
-              name="example"
-              control={control}
-              render={({ field }) => (
-                <InputText
-                  id="example"
-                  {...field}
-                  className="w-full bg-gray-700 text-white border-gray-600"
-                />
-              )}
-            />
-            <label htmlFor="example">Example</label>
-          </span>
-        </div>
-
-        {/* IPA Field */}
-        <div>
-          <span className="p-float-label">
-            <Controller
-              name="ipa"
-              control={control}
-              render={({ field }) => (
-                <InputText
-                  id="ipa"
-                  {...field}
-                  className="w-full bg-gray-700 text-white border-gray-600"
-                />
-              )}
-            />
-            <label htmlFor="ipa">IPA</label>
-          </span>
-        </div>
-
-        {/* Action Buttons */}
-        <div className="flex justify-end gap-4">
-          <Button
-            label="Cancel"
-            icon="pi pi-times"
-            className="p-button-text p-button-rounded bg-red-600 text-white"
-            onClick={() => {
-              resetForm();
-              onHide();
-            }}
+      <div className="cs-dialog-content">
+        <FormWrapper
+          methods={methods}
+          onSubmit={onSubmit}
+          className="flex flex-col gap-y-2"
+        >
+          <div className="input-label">Word</div>
+          <InputControl name="word" type="text" />
+          <div className="input-label">Class</div>
+          <CheckboxGroupControl
+            name="class_id"
+            options={classes_data.map((cls) => ({
+              value: cls.class_id,
+              label: `${cls.name} (${cls.abbreviation})`,
+            }))}
           />
-          <Button
-            label="Add"
-            icon="pi pi-check"
-            className="p-button-rounded p-button-success"
-            type="submit"
-          />
-        </div>
-      </form>
+          <div className="input-label">Meaning</div>
+          <InputControl name="meaning" type="text" />
+
+          <div className="input-label">IPA</div>
+          <InputControl name="ipa" type="text" />
+
+          <div className="input-label">Stress</div>
+          <div className="flex gap-1 input-styles flex-row items-center">
+            {wordValue.split("").map((char, index) => (
+              <div
+                key={index}
+                className={`stress-box ${
+                  methods.getValues("stress") === index ? "highlighted" : ""
+                }`}
+                onClick={() => {
+                  setSelectedStressIndex(index);
+                }}
+              >
+                {char}
+              </div>
+            ))}
+          </div>
+
+          <div className="input-label">Example</div>
+          <InputControl name="example" type="text" />
+          <Button type="submit" value="Submit" additionalClassName="my-4" />
+        </FormWrapper>
+      </div>
     </Dialog>
   );
 };
-
-export default AddVocabDialog;

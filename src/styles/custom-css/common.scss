@@ -19,7 +19,7 @@
 }
 
 .button-primary-active {
-  background: rgba(55, 155, 155, 0.8);
+  background: var(--color-primary-active);
 }
 
 .scale-animation-active {
@@ -29,4 +29,35 @@
 
 .scale-animation-active:active {
   transform: scale(0.9);
+}
+
+.input-no-control-wrp {
+  position: relative;
+
+  .inc {
+    padding: 0.25rem 0.5rem 0.25rem 2.5rem;
+    border: 2px solid var(--color-primary-light);
+    border-radius: 9999px;
+    width: 100%;
+    color: black;
+    transition: border-color 0.2s ease-in-out, border-width 0.2s ease-in-out;
+  }
+
+  .inc-search-icon {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    transition: color 0.2s ease-in-out;
+  }
+
+  .inc:focus {
+    border-color: var(--color-orange-focus);
+    outline: none;
+    border-width: 3px;
+  }
+
+  .inc:focus+.inc-search-icon {
+    color: var(--color-orange-focus);
+  }
 }

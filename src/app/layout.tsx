@@ -14,6 +14,7 @@ import { LoadingDialog } from "../components/common/loading/loadingDialog";
 import { useCommonStore } from "../store/common-store";
 import { useAuthCookies } from "../hook/cookies";
 import { useEffect } from "react";
+import { useAuthStore } from "../store/auth-store";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,9 +33,11 @@ export default function RootLayout({
 }>) {
   const { session, getSession } = useMasterDataStore();
   const { isLoading } = useCommonStore();
-  const { getAuthCookie } = useAuthCookies();
+  const { getAuthCookie, getAccountIdCookie } = useAuthCookies();
   const pathName = usePathname();
   const token = getAuthCookie()?.toString() || undefined;
+  const account_id = getAccountIdCookie() || undefined;
+  const {} = useAuthStore();
 
   useEffect(() => {
     console.log("useEffect");
@@ -43,6 +46,15 @@ export default function RootLayout({
       if (session === false) {
         getSession();
       }
+      console.log("cookie:", account_id);
+
+      useAuthStore.setState({
+        accountData: {
+          account_id: Number(account_id),
+          email: "",
+          rule_id: 2,
+        },
+      });
     } else if (!pathName?.includes(ROUTER.AUTH)) {
       console.log("pathName:", pathName);
       redirect(ROUTER.LOGIN);
@@ -56,7 +68,7 @@ export default function RootLayout({
         <title>{metadata.title}</title>
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col text-black`}
       >
         {pathName !== ROUTER.LOGIN && pathName !== ROUTER.REGISTER ? (
           <>

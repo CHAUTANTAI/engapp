@@ -2,7 +2,7 @@
 import { SubmitHandler, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useLoginStore } from "../../../store/login-store";
-import { InputControl } from "../../../components/common/control/inputControl";
+import { InputControl } from "../../../components/common/control/input/inputControl";
 import FormWrapper from "../../../components/form/form";
 import { AuthSchema, AuthSchemaType } from "../../../schema/login-schema";
 import { useState } from "react";

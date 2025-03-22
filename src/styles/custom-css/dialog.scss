@@ -1,0 +1,44 @@
+.cs-dialog {
+    width: 50vw;
+    height: 100vh;
+    background-color: white;
+    border-radius: 10px;
+    overflow: auto;
+    box-sizing: border-box;
+
+    .cs-dialog-content {
+        padding-inline: 2rem;
+        padding-top: 1rem;
+    }
+
+    .p-dialog-header-close {
+        position: absolute;
+        top: 1.5%;
+        right: 2%;
+        width: 30px;
+        height: 30px;
+    }
+
+    .title {
+        font-size: 2rem;
+        color: var(--color-primary);
+        font-weight: bold;
+    }
+    .stress-box {
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid #ccc;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: 0.3s ease-in-out;
+      }
+      
+      .stress-box.highlighted {
+        background-color: var(--color-primary);
+        color: white;
+        border-color: var(--color-primary);
+      }
+}

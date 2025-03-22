@@ -1,4 +1,5 @@
 import { API_ENDPOINT } from "../const/api-endpoint";
+import { AccountModel } from "../model/account-model";
 import { AuthSchemaType } from "../schema/login-schema";
 import createAPI, { BaseResponse } from "../util/api/base-api";
 
@@ -11,13 +12,15 @@ class AuthService {
     });
   };
 
-  static login = (body: AuthSchemaType):Promise<BaseResponse> => {
+  static login = (
+    body: AuthSchemaType
+  ): Promise<BaseResponse<AccountModel>> => {
     return createAPI({
-      method: 'POST',
+      method: "POST",
       url: API_ENDPOINT.LOGIN,
       body: body,
-    })
-  }
+    });
+  };
 }
 
 export default AuthService;

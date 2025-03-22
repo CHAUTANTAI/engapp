@@ -1,6 +1,6 @@
 import { useController, useFormContext } from "react-hook-form";
-import { Icon } from "../icon/icon";
-import { InputErrorWarning } from "./errorMessage";
+import { Icon } from "../../icon/icon";
+import { InputErrorWarning } from "../errorMessage";
 import { useEffect, useState } from "react";
 
 interface InputControlProps {
@@ -26,7 +26,7 @@ export const InputControl: React.FC<InputControlProps> = ({
   maxLength,
   readonly,
   disable,
-  className,
+  className = "input-styles",
   wrapperClassName = "",
   additionalClassName = "",
 }) => {
