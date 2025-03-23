@@ -15,13 +15,13 @@ export const useClassStore = create<ClassStore>((set) => ({
     try {
       const { data, status } = await ClassService.getClasses();
       if (status === 200 && data) {
-        set({ classes_data: data.classes, isLoading: false });
+        set({ classes_data: data.classes });
         return data;
       }
     } catch (e) {
       console.error("Error fetching classes:", e);
-      return { classes: [] }; 
+      return { classes: [] };
     }
-    return { classes: [] }; 
+    return { classes: [] };
   },
 }));

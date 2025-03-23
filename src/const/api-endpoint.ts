@@ -4,4 +4,7 @@ export const API_ENDPOINT = {
   GET_VOCAB: "vocab",
   GET_CLASS: "class",
   CREATE_VOCAB: "create-vocab",
+  GET_PRACTICE: "practice",
+  CREATE_PRACTICE: "create-practice",
+  ADD_VOCAB_PRACTICE: "add-vocab-practice",
 };

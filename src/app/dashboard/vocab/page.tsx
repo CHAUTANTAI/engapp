@@ -1,12 +1,13 @@
 "use client";
-import { DataTable, DataTablePageEvent } from "primereact/datatable";
-import { Column } from "primereact/column";
+import { DataTablePageEvent } from "primereact/datatable";
 import { useEffect, useState } from "react";
 import { useVocabStore } from "../../../store/vocab-store";
 import { InputNoControl } from "../../../components/common/control/input/inputNoControl";
 import { ButtonAnimationWrapper } from "../../../components/common/animation/buttonAnimation";
 import { AddNewVocabDialog } from "./addNewVocabDialog";
 import { useAuthStore } from "../../../store/auth-store";
+import { LoadingSkeleton } from "../../../components/common/loading/skeletonLoading";
+import CommonDataTable from "../../../components/common/table/table";
 
 const VocabScreen = () => {
   const [dialogVisible, setDialogVisible] = useState<boolean>(false);
@@ -17,7 +18,7 @@ const VocabScreen = () => {
 
   const onInit = async () => {
     console.log(accountData);
-    
+    useVocabStore.setState({ isLoading: true });
     if (accountData) {
       await getVocabs({
         current_page: 1,
@@ -26,9 +27,11 @@ const VocabScreen = () => {
         account_id: accountData?.account_id,
       });
     }
+    useVocabStore.setState({ isLoading: false });
   };
 
   const onChangePage = async (event: DataTablePageEvent): Promise<void> => {
+    useVocabStore.setState({ isLoading: true });
     console.log("Paging event:", event);
     setFirst(event.first);
     setRows(event.rows);
@@ -40,6 +43,7 @@ const VocabScreen = () => {
         account_id: accountData?.account_id,
       });
     }
+    useVocabStore.setState({ isLoading: false });
   };
 
   const renderActionColumn = () => {
@@ -86,78 +90,75 @@ const VocabScreen = () => {
       {/* Search bar */}
       <InputNoControl type="search" />
       {/* DataTable */}
-      <div className="cs-table-wrapper">
-        <DataTable
+      <LoadingSkeleton
+        isLoading={isLoading}
+        type="table"
+        height="37rem"
+        additionalClassName="p-4"
+      >
+        <CommonDataTable
           value={vocabs_data.vocabs}
-          paginator
+          totalRecords={vocabs_data.total_records}
+          isLoading={isLoading}
           first={first}
           rows={rows}
-          rowsPerPageOptions={[10, 20, 50]}
-          totalRecords={vocabs_data.total_records}
-          loading={isLoading}
           onSelectionChange={(e) => {
             console.log(e);
           }}
-          lazy
+          onPageChange={onChangePage}
           dataKey="vocab_id"
           emptyMessage="No vocabularies found."
-          className="text-black p-4"
-          exportFilename="vocab_list"
+          wrapperClassName="cs-table-wrapper"
           tableClassName="cs-table"
-          paginatorClassName="cs-paginator"
-          onPage={onChangePage}
-          resizableColumns
-        >
-          <Column
-            header="Actions"
-            headerClassName="cs-header cs-header-first"
-            className="cs-cell"
-            alignHeader={"center"}
-            body={renderActionColumn}
-          />
-          <Column
-            field="word"
-            header="Word"
-            headerClassName="cs-header"
-            className="cs-cell"
-            sortable
-          />
-          <Column
-            field="ipa"
-            header="IPA"
-            headerClassName="cs-header"
-            className="cs-cell"
-            alignHeader={"center"}
-          />
-          <Column
-            field="class_names"
-            header="Class"
-            headerClassName="cs-header"
-            className="cs-cell"
-            alignHeader={"center"}
-            sortable
-            filter
-          />
-          <Column
-            field="meaning"
-            header="Meaning"
-            headerClassName="cs-header"
-            className="cs-cell"
-            alignHeader={"center"}
-            sortable
-          />
-          <Column
-            field="example"
-            header="Example"
-            headerClassName="cs-header cs-header-last"
-            className="cs-cell"
-            alignHeader={"center"}
-            body={(rowData) => (
-              <span className="italic">{rowData.example || "--"}</span>
-            )}
-          />
-        </DataTable>
-      </div>
+          columns={[
+            {
+              header: "Actions",
+              className: "cs-cell",
+              alignHeader: "center",
+              headerClassName: "cs-header cs-header-first",
+              body: renderActionColumn,
+            },
+            {
+              field: "word",
+              header: "Word",
+              className: "cs-cell",
+              alignHeader: "center",
+              headerClassName: "cs-header",
+            },
+            {
+              field: "ipa",
+              header: "IPA",
+              className: "cs-cell",
+              alignHeader: "center",
+              headerClassName: "cs-header",
+            },
+            {
+              field: "class_names",
+              header: "Class",
+              className: "cs-cell",
+              alignHeader: "center",
+              headerClassName: "cs-header",
+            },
+            {
+              field: "meaning",
+              header: "Meaning",
+              className: "cs-cell",
+              alignHeader: "center",
+              headerClassName: "cs-header",
+            },
+            {
+              field: "example",
+              header: "Example",
+              className: "cs-cell",
+              alignHeader: "center",
+              headerClassName: "cs-header cs-header-last",
+              body: (rowData) => (
+                <span className="italic">{rowData.example || "--"}</span>
+              ),
+            },
+          ]}
+        />
+      </LoadingSkeleton>
       {dialogVisible && (
         <AddNewVocabDialog visible={dialogVisible} onHide={onHideDialog} />
       )}

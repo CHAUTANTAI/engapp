@@ -11,6 +11,8 @@ import { CheckboxGroupControl } from "../../../components/common/control/checkbo
 import { VocabService } from "../../../services/vocab-service";
 import { useAuthStore } from "../../../store/auth-store";
 import { CreateVocabReqModel } from "../../../model/vocab-model";
+import { LoadingSkeleton } from "../../../components/common/loading/skeletonLoading";
+import { CommonDialog } from "../../../components/common/dialog/dialog";
 
 interface AddNewVocabDialogProps {
   visible: boolean;
@@ -21,7 +23,7 @@ export const AddNewVocabDialog: React.FC<AddNewVocabDialogProps> = ({
   visible,
   onHide,
 }) => {
-  const { getClasses, classes_data } = useClassStore();
+  const { getClasses, classes_data, isLoading } = useClassStore();
   const { accountData } = useAuthStore();
   const methods = useForm({
     resolver: zodResolver(VocabSchema),
@@ -81,7 +83,9 @@ export const AddNewVocabDialog: React.FC<AddNewVocabDialogProps> = ({
   };
 
   const handleInit = async () => {
+    useClassStore.setState({ isLoading: true });
     await getClasses();
+    useClassStore.setState({ isLoading: false });
   };
 
   useEffect(() => {
@@ -95,21 +99,7 @@ export const AddNewVocabDialog: React.FC<AddNewVocabDialogProps> = ({
   console.log(methods.getValues("class_id"));
 
   return (
-    <Dialog
-      visible={visible}
-      onHide={onHide}
-      className="cs-dialog shadow-custom"
-      closeIcon={
-        <i className="pi pi-times text-red-500 text-2xl font-bold z-10"></i>
-      }
-      header={
-        <div className="relative shadow-lg z-10">
-          <div className="flex flex-row items-center justify-center title">
-            ADD NEW VOCAB
-          </div>
-        </div>
-      }
-    >
+    <CommonDialog visible={visible} onHide={onHide} headerTitle="ADD NEW VOCAB">
       <div className="cs-dialog-content">
         <FormWrapper
           methods={methods}
@@ -119,13 +109,20 @@ export const AddNewVocabDialog: React.FC<AddNewVocabDialogProps> = ({
           <div className="input-label">Word</div>
           <InputControl name="word" type="text" />
           <div className="input-label">Class</div>
-          <CheckboxGroupControl
-            name="class_id"
-            options={classes_data.map((cls) => ({
-              value: cls.class_id,
-              label: `${cls.name} (${cls.abbreviation})`,
-            }))}
-          />
+          <LoadingSkeleton
+            isLoading={isLoading}
+            type="table"
+            height="3rem"
+            additionalClassName="p-2"
+          >
+            <CheckboxGroupControl
+              name="class_id"
+              options={classes_data.map((cls) => ({
+                value: cls.class_id,
+                label: `${cls.name} (${cls.abbreviation})`,
+              }))}
+            />
+          </LoadingSkeleton>
           <div className="input-label">Meaning</div>
           <InputControl name="meaning" type="text" />
 
@@ -154,6 +151,6 @@ export const AddNewVocabDialog: React.FC<AddNewVocabDialogProps> = ({
           <Button type="submit" value="Submit" additionalClassName="my-4" />
         </FormWrapper>
       </div>
-    </Dialog>
+    </CommonDialog>
   );
 };
