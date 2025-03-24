@@ -1,4 +1,3 @@
-import { Dialog } from "primereact/dialog";
 import FormWrapper from "../../../components/form/form";
 import { useForm } from "react-hook-form";
 import { VocabSchema, VocabSchemaType } from "../../../schema/vocab-schema";
