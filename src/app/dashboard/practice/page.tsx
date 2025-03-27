@@ -58,14 +58,34 @@ const PracticeScreen = () => {
       <LoadingSkeleton isLoading={isLoading} height="10rem">
         <OrderList
           dataKey="practice_id"
-          value={practices}
+          value={[...practices, ...practices, ...practices, ...practices]}
           onChange={() => {}}
           itemTemplate={(item: PracticeModel) => {
             console.log(item);
 
-            return <h1>{item.name}</h1>;
+            return (
+              <ButtonAnimationWrapper additionalClassName="w-full" scale={1.02}>
+                <div className="w-full py-1 px-6">
+                  <div className="my-1 p-2 text-white bg-[var(--color-primary)] rounded-full font-bold px-6 text-[1.1rem] w-full text-start flex flex-row items-center justify-between">
+                    {item.name}
+                    <div className=" flex flex-row gap-x-2 items-center justify-center">
+                      <i className="pi pi-star text-yellow-400 text-2xl"></i>
+                    </div>
+                  </div>
+                </div>
+              </ButtonAnimationWrapper>
+            );
           }}
-          header="Practices"
+          header={(
+            <div className="text-[var(--color-primary)] text-[1.5rem] font-bold">Practices:</div>
+          )}
+          pt={{
+            controls: { root: { className: "hidden" } },
+            moveUpButton: { root: { className: "hidden" } },
+            moveDownButton: { root: { className: "hidden" } },
+            moveTopButton: { root: { className: "hidden" } },
+            moveBottomButton: { root: { className: "hidden" } },
+          }}
         ></OrderList>
       </LoadingSkeleton>
       {dialogVisible && (
