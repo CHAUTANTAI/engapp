@@ -58,7 +58,7 @@ const PracticeScreen = () => {
       <LoadingSkeleton isLoading={isLoading} height="10rem">
         <OrderList
           dataKey="practice_id"
-          value={[...practices, ...practices, ...practices, ...practices]}
+          value={practices}
           onChange={() => {}}
           itemTemplate={(item: PracticeModel) => {
             console.log(item);
