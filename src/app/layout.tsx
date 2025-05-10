@@ -15,10 +15,8 @@ import { useCommonStore } from "../store/common-store";
 import { useAuthCookies } from "../hook/cookies";
 import { useEffect, useState } from "react";
 import { useAuthStore } from "../store/auth-store";
-import { PrimeReactProvider, PrimeReactContext } from "primereact/api";
+import { PrimeReactProvider } from "primereact/api";
 import { PanelMenu } from "primereact/panelmenu";
-import { HEADER_ITEM } from "../const/label";
-import { url } from "inspector";
 import { useRouteControl } from "../hook/routeControl";
 
 const geistSans = Geist({
@@ -33,8 +31,10 @@ const geistMono = Geist_Mono({
 
 export interface MenuItem {
   label: string;
+  icon?: string;
   route?: ROUTER;
-  children?: MenuItem[];
+  items?: MenuItem[];
+  command?: () => void;
 }
 
 export default function RootLayout({
@@ -49,15 +49,15 @@ export default function RootLayout({
   const token = getAuthCookie()?.toString() || undefined;
   const account_id = getAccountIdCookie() || undefined;
   const {} = useAuthStore();
-  const [sidebarModel, setSidebarModel] = useState<any[]>([]);
+  const [sidebarModel, setSidebarModel] = useState<MenuItem[]>([]);
   const { redirectScreen } = useRouteControl();
 
-  const homeSidebarModel: any[] = [];
-  const dashboardSidebarModel: any[] = [
+  const homeSidebarModel: MenuItem[] = [];
+  const dashboardSidebarModel: MenuItem[] = [
     { label: "Flashcards", icon: "pi pi-clone", route: ROUTER.FLASHCARD },
     { label: "More", icon: "pi pi-ellipsis-h" },
   ];
-  const accountSidebarModel: any[] = [
+  const accountSidebarModel: MenuItem[] = [
     { label: "Profile", icon: "pi pi-user" },
     { label: "Settings", icon: "pi pi-cog" },
   ];
