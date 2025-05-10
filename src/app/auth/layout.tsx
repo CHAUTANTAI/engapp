@@ -3,7 +3,7 @@ import Image from "next/image";
 import { Label } from "../../components/common/component/label";
 import { useLoginStore } from "../../store/login-store";
 import { redirect } from "next/navigation";
-import { Button } from "../../components/common/button/button";
+import { Button } from "primereact/button";
 const LoginLayout = ({
   children,
 }: Readonly<{
@@ -37,7 +37,7 @@ const LoginLayout = ({
                   className={`${
                     mode === 1 ? "button-styles" : "button-blurred-styles"
                   }`}
-                  value={"Login"}
+                  label={"Login"}
                   onClick={() => {
                     if (useLoginStore.getState().mode !== 1) {
                       useLoginStore.setState({ mode: 1 });
@@ -50,7 +50,7 @@ const LoginLayout = ({
                   className={`${
                     mode === 2 ? "button-styles" : "button-blurred-styles"
                   }`}
-                  value={"Register"}
+                  label={"Register"}
                   onClick={() => {
                     if (useLoginStore.getState().mode !== 2) {
                       useLoginStore.setState({ mode: 2 });

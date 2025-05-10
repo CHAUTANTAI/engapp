@@ -1,122 +1,95 @@
-import { useState, useEffect } from "react";
-import { Menubar } from "primereact/menubar";
+import { useState, useEffect, useMemo, startTransition } from "react";
 import { Sidebar } from "primereact/sidebar";
-import { Button } from "../../common/button/button";
-import { Icon } from "../../common/icon/icon";
+import { Button } from "primereact/button";
+import { Menu } from "primereact/menu";
 import { useRouteControl } from "../../../hook/routeControl";
 import { ROUTER } from "../../../const/routers";
+import { HEADER_ITEM } from "../../../const/label";
 
-export default function ResponsiveHeader() {
+interface HeaderItem {
+  label: string;
+  route: ROUTER;
+}
+
+interface HeaderProps {}
+
+export default function Header({}: HeaderProps) {
   const [visible, setVisible] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [activeItem, setActiveItem] = useState("Home");
   const { redirectScreen } = useRouteControl();
 
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-    };
+  const items: HeaderItem[] = [
+    { label: HEADER_ITEM.HOME, route: ROUTER.HOME },
+    { label: HEADER_ITEM.DASHBOARD, route: ROUTER.VOCAB },
+    { label: HEADER_ITEM.ACCOUNT, route: ROUTER.ACCOUNT },
+  ];
 
+  const handleItemClick = (item: HeaderItem, closeSidebar: boolean = false) => {
+    if (activeItem !== item.label) {
+      setActiveItem(item.label);
+      redirectScreen(item.route);
+    }
+    if (closeSidebar) setVisible(false);
+  };
+
+  // Memoize model to avoid recalculating every render
+  const menuModel = useMemo(
+    () =>
+      items.map((item) => ({
+        label: item.label,
+        command: () => handleItemClick(item, true),
+      })),
+    [items, activeItem]
+  );
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
     handleResize();
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const items = [
-    { label: "Home", route: ROUTER.HOME },
-    { label: "Dashboard", route: ROUTER.VOCAB },
-    { label: "Account", route: ROUTER.ACCOUNT },
-  ];
-
-  const handleOnClickItem = (
-    route: ROUTER,
-    label: string,
-    additionalAction?: () => void
-  ) => {
-    if (activeItem !== label) {
-      setActiveItem(label || "Home");
-      redirectScreen(route);
-      if (additionalAction) {
-        additionalAction();
-      }
-    }
-  };
-
   return (
     <div className="relative">
       {isMobile ? (
-        <div className="flex items-center p-3 bg-[var(--primary)] text-white gap-x-2">
-          <Icon
-            name="bars"
-            onClickWrapper={() => {
-              setVisible(true);
-            }}
-          />
-          <Button
-            type="button"
-            onClick={() => {
-              setVisible(true);
-            }}
-            className="mr-2 text-white font-bold text-[1rem] "
-            value={"ENG APP"}
-          />
+        <div className="flex items-center p-2 bg-[var(--primary-color)] text-white gap-x-2">
+          <Button icon="pi pi-bars" onClick={() => setVisible(true)} />
+          <span className="text-white font-bold text-[1rem]">ENG APP</span>
         </div>
       ) : (
-        <Menubar
-          start={() => (
-            <div className="text-white text-[2rem] font-bold absolute top-4 left-5">
-              ENG APP
-            </div>
-          )}
-          model={items.map((item) => {
-            return {
-              ...item,
-              className: `text-white font-bold text-[1rem] px-8 py-4 rounded-full scale-animation-active ${
-                activeItem === item.label ? "button-primary-active" : ""
-              }`,
-              command: () => {
-                handleOnClickItem(item.route, item.label);
-              },
-            };
-          })}
-          className="py-3 flex items-center justify-center bg-[var(--primary)] w-full"
-        />
+        <div className="h-20 flex justify-between items-center bg-[var(--primary-color)] py-3 px-6 w-full relative">
+          {/* Start - Logo */}
+          <div className="text-white text-[2rem] font-bold z-10">ENG APP</div>
+
+          {/* Center - Menu items */}
+          <div className="rounded-full shadow-2xl absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 flex gap-x-6 z-0">
+            {items.map((item) => (
+              <Button
+                key={item.label}
+                label={item.label}
+                rounded
+                onClick={() => handleItemClick(item)}
+                className="w-[8rem]"
+              />
+            ))}
+          </div>
+
+          {/* End - User icon */}
+          <Button icon="pi pi-user" aria-label="User" />
+        </div>
       )}
 
-      {/* Sidebar cho mobile */}
       <Sidebar
         visible={visible}
-        onHide={() => {
-          setVisible(false);
-        }}
-        className="bg-white rounded-tr-3xl rounded-br-3xl"
-        header={() => (
-          <div className="text-[rgba(30,108,153,1)] text-[2rem] font-bold flex items-center justify-center bg-[#1e6c994b] w-full border-b-2 border-blue-100 rounded-tr-3xl">
-            ENG APP
-          </div>
-        )}
+        onHide={() => setVisible(false)}
+        className="bg-white w-2/3"
         showCloseIcon={false}
       >
-        <ul className="list-none py-4">
-          {items.map((item, index) => (
-            <div key={index}>
-              <li
-                className={`pr-4 py-3 flex items-center font-bold text-[rgba(30,108,153,1)] scale-animation-active
-                        ${
-                          activeItem === item.label
-                            ? "justify-center text-[1.5rem] pr-24 text-[rgb(30,140,170)]"
-                            : "pl-8 text-[1rem]"
-                        }`}
-                onClick={() => {
-                  handleOnClickItem(item.route, item.label, () => setVisible(false));
-                }}
-              >
-                {item.label}
-              </li>
-              <div className="border-b-2 border-gray-100 w-full"></div>
-            </div>
-          ))}
-        </ul>
+        <div className="text-[var(--primary-color)] text-[2rem] font-bold text-center mb-3">
+          ENG APP
+        </div>
+        <Menu model={menuModel} className="w-full" />
       </Sidebar>
     </div>
   );

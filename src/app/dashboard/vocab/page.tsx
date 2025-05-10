@@ -17,7 +17,6 @@ const VocabScreen = () => {
   const { accountData } = useAuthStore();
 
   const onInit = async () => {
-    console.log(accountData);
     useVocabStore.setState({ isLoading: true });
     if (accountData) {
       await getVocabs({

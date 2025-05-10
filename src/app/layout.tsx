@@ -13,8 +13,13 @@ import { ROUTER } from "../const/routers";
 import { LoadingDialog } from "../components/common/loading/loadingDialog";
 import { useCommonStore } from "../store/common-store";
 import { useAuthCookies } from "../hook/cookies";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAuthStore } from "../store/auth-store";
+import { PrimeReactProvider, PrimeReactContext } from "primereact/api";
+import { PanelMenu } from "primereact/panelmenu";
+import { HEADER_ITEM } from "../const/label";
+import { url } from "inspector";
+import { useRouteControl } from "../hook/routeControl";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,6 +30,12 @@ const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
 });
+
+export interface MenuItem {
+  label: string;
+  route?: ROUTER;
+  children?: MenuItem[];
+}
 
 export default function RootLayout({
   children,
@@ -38,16 +49,35 @@ export default function RootLayout({
   const token = getAuthCookie()?.toString() || undefined;
   const account_id = getAccountIdCookie() || undefined;
   const {} = useAuthStore();
+  const [sidebarModel, setSidebarModel] = useState<any[]>([]);
+  const { redirectScreen } = useRouteControl();
+
+  const homeSidebarModel: any[] = [];
+  const dashboardSidebarModel: any[] = [
+    { label: "Flashcards", icon: "pi pi-clone", route: ROUTER.FLASHCARD },
+    { label: "More", icon: "pi pi-ellipsis-h" },
+  ];
+  const accountSidebarModel: any[] = [
+    { label: "Profile", icon: "pi pi-user" },
+    { label: "Settings", icon: "pi pi-cog" },
+  ];
 
   useEffect(() => {
-    console.log("useEffect");
-
+    if (pathName?.startsWith(ROUTER.DASHBOARD)) {
+      setSidebarModel(dashboardSidebarModel);
+    } else if (pathName?.startsWith(ROUTER.ACCOUNT)) {
+      setSidebarModel(accountSidebarModel);
+    } else if (pathName === ROUTER.HOME) {
+      setSidebarModel(homeSidebarModel);
+    } else {
+      setSidebarModel([]);
+    }
+  }, [pathName]);
+  useEffect(() => {
     if (token && token === "OOO") {
       if (session === false) {
         getSession();
       }
-      console.log("cookie:", account_id);
-
       useAuthStore.setState({
         accountData: {
           account_id: Number(account_id),
@@ -56,11 +86,11 @@ export default function RootLayout({
         },
       });
     } else if (!pathName?.includes(ROUTER.AUTH)) {
-      console.log("pathName:", pathName);
       redirect(ROUTER.LOGIN);
     }
   }, [token, pathName, getSession, session]);
 
+  console.log(sidebarModel);
   return (
     <html lang="en">
       <head>
@@ -72,11 +102,45 @@ export default function RootLayout({
       >
         {pathName !== ROUTER.LOGIN && pathName !== ROUTER.REGISTER ? (
           <>
-            <Header />
-            <div className="bg-white w-full min-h-[calc(100vh-197px)] ssm-under:min-h-[calc(100vh-173px)]">
-              {children}
-            </div>
-            <Footer />
+            <PrimeReactProvider value={{ ripple: true }}>
+              <div className="sticky top-0 z-50 w-full">
+                <Header />
+              </div>
+              {/* Flex container: Sidebar + Main content */}
+              <div
+                className="flex flex-1 min-h-0 bg-white"
+                style={{ minHeight: "0" }}
+              >
+                {sidebarModel.length > 0 && (
+                  <aside
+                    className="w-64 min-w-56 max-w-xs "
+                    style={{
+                      position: "sticky",
+                      top: "80px",
+                      alignSelf: "flex-start",
+                      maxHeight: "calc(100vh - 80px)",
+                      minHeight: "calc(100vh - 80px)",
+                      overflowY: "auto",
+                      background: "#fff",
+                      borderRight: "1px solid #e5e7eb",
+                      zIndex: 20,
+                    }}
+                  >
+                    <PanelMenu
+                      model={sidebarModel.map((item) => ({
+                        ...item,
+                        command: item.route
+                          ? () => redirectScreen(ROUTER.FLASHCARD)
+                          : undefined,
+                      }))}
+                      className="h-full "
+                    />
+                  </aside>
+                )}
+                <main className="flex-1 overflow-y-auto p-1">{children}</main>
+              </div>
+              <Footer />
+            </PrimeReactProvider>
           </>
         ) : (
           <>{children}</>

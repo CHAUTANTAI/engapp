@@ -8,4 +8,9 @@
     width: max-content;
     height: max-content;
   }
-  
+
+.button-active {
+    border-width: 2px;
+    border-color: white;    
+    box-shadow: 0 0 10px 1px white, 0 0 5px 1px #ccc;
+}

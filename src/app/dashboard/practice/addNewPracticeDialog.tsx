@@ -8,7 +8,7 @@ import { PracticeSchema, PracticeType } from "../../../schema/practice-schema";
 import { CommonDialog } from "../../../components/common/dialog/dialog";
 import FormWrapper from "../../../components/form/form";
 import { InputControl } from "../../../components/common/control/input/inputControl";
-import { Button } from "../../../components/common/button/button";
+import { Button } from "primereact/button";
 
 interface AddNewPracticeDialogProps {
   visible: boolean;
@@ -83,7 +83,7 @@ export const AddNewPracticeDialog: React.FC<AddNewPracticeDialogProps> = ({
 
           <div className="input-label">Description</div>
           <InputControl name="description" type="text" />
-          <Button type="submit" value="Submit" additionalClassName="my-4" />
+          <Button type="submit" label="Submit" className="my-4" />
         </FormWrapper>
       </div>
     </CommonDialog>

@@ -23,12 +23,12 @@ const DashboardLayout = ({
     route: ROUTER;
   }) => {
     if (item.label !== activeItem) {
-      redirectScreen(item.route);
       setActiceItem(item.label);
+      redirectScreen(item.route);
     }
   };
   return (
-    <div className="flex flex-col pt-8 pb-2 px-[var(--padding-center-pc)] gap-y-2 ssm-under:px-[var(--padding-center-mobile)]">
+    <div className="flex flex-col pb-2 gap-y-2 ssm-under:px-[var(--padding-center-mobile)]">
       <CustomText
         text="WELCOME TO DASHBOARD"
         size={28}

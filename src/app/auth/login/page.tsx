@@ -7,7 +7,6 @@ import { AuthSchema, AuthSchemaType } from "../../../schema/login-schema";
 import { Checkbox } from "../../../components/common/control/checkboxControl";
 import { Label } from "../../../components/common/component/label";
 import { useLoginStore } from "../../../store/login-store";
-import { Button } from "../../../components/common/button/button";
 import { useState } from "react";
 import AuthService from "../../../services/auth-service";
 import { useCommonStore } from "../../../store/common-store";
@@ -16,6 +15,7 @@ import { ROUTER } from "../../../const/routers";
 import { useMasterDataStore } from "../../../store/master-data-store";
 import { useAuthCookies } from "../../../hook/cookies";
 import { useAuthStore } from "../../../store/auth-store";
+import { Button } from "primereact/button";
 
 const Login = () => {
   const { mode } = useLoginStore();
@@ -115,8 +115,8 @@ const Login = () => {
         </div>
         <Button
           type="submit"
-          additionalClassName="!w-full mt-4"
-          value={`${mode === 1 ? "Login" : "Register"}`}
+          className="!w-full mt-4"
+          label={`${mode === 1 ? "Login" : "Register"}`}
           onClick={() => {}}
         />
       </FormWrapper>

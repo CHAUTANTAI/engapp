@@ -1,17 +1,36 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@import "primereact/resources/themes/lara-light-cyan/theme.css";
+@import "primereact/resources/primereact.min.css";
 @import "primeicons/primeicons.css";
+@import "primeflex/primeflex.css";
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: #fff;
+  color: #000;
+  min-height: 100vh;
+  width: 100vw;
+  box-sizing: border-box;
+}
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
 
 :root {
   --background: #ffffff;
   --foreground: #171717;
   --color-black: #000000;
-  --primary: rgba(73, 187, 189, 1);
-  --color-primary: rgba(73, 187, 189, 1);
+  /* --primary: rgba(73, 187, 189, 1);
+  --primary-color: rgba(73, 187, 189, 1); */
   --color-primary-light: rgb(90, 220, 223);
   --color-primary-light-dim: rgba(90, 220, 223, 0.15);
-  --color-primary-active: rgba(55, 155, 155, 0.8);
+  --color-primary-active: rgb(66, 172, 173);
   --sidebar: rgba(157, 204, 255, 1);
   --color-orange-focus: rgb(255, 153, 0);
   --color-link: rgb(255, 0, 0);

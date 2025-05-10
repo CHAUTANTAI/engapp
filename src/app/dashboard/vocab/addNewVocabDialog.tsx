@@ -3,7 +3,6 @@ import { useForm } from "react-hook-form";
 import { VocabSchema, VocabSchemaType } from "../../../schema/vocab-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { InputControl } from "../../../components/common/control/input/inputControl";
-import { Button } from "../../../components/common/button/button";
 import { useEffect } from "react";
 import { useClassStore } from "../../../store/class-store";
 import { CheckboxGroupControl } from "../../../components/common/control/checkboxGroupControl";
@@ -12,6 +11,7 @@ import { useAuthStore } from "../../../store/auth-store";
 import { CreateVocabReqModel } from "../../../model/vocab-model";
 import { LoadingSkeleton } from "../../../components/common/loading/skeletonLoading";
 import { CommonDialog } from "../../../components/common/dialog/dialog";
+import { Button } from "primereact/button";
 
 interface AddNewVocabDialogProps {
   visible: boolean;
@@ -147,7 +147,7 @@ export const AddNewVocabDialog: React.FC<AddNewVocabDialogProps> = ({
 
           <div className="input-label">Example</div>
           <InputControl name="example" type="text" />
-          <Button type="submit" value="Submit" additionalClassName="my-4" />
+          <Button type="submit" label="Submit" className="my-4" />
         </FormWrapper>
       </div>
     </CommonDialog>

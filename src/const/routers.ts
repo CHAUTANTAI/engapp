@@ -7,4 +7,5 @@ export enum ROUTER {
   PRACTICE = "/dashboard/practice",
   DASHBOARD = "/dashboard",
   ACCOUNT = "/account",
+  FLASHCARD = "/dashboard/flashcard",
 }
