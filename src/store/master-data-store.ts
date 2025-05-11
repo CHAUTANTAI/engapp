@@ -6,12 +6,12 @@ interface MasterDataStore {
 }
 
 export const getSession = () => {
-    try {
-        useMasterDataStore.setState({session: true});
-    } catch {
-      useMasterDataStore.setState({session: false});
-    }
-}
+  try {
+    useMasterDataStore.setState({ session: true });
+  } catch {
+    useMasterDataStore.setState({ session: false });
+  }
+};
 
 export const useMasterDataStore = create<MasterDataStore>(() => ({
   session: false,

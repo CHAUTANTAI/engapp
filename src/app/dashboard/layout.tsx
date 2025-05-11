@@ -1,67 +1,66 @@
 "use client";
-
-import { useState } from "react";
-import { CustomText } from "../../components/common/text/text";
-import { HEADER_ITEM_DASHBOARD } from "../../const/label";
+import { BreadCrumb } from "primereact/breadcrumb";
+import { usePathname } from "next/navigation";
 import { ROUTER } from "../../const/routers";
 import { useRouteControl } from "../../hook/routeControl";
+import { useEffect, useState } from "react";
+import { useParams } from "next/dist/client/components/navigation";
+
+export interface BreadCrumbItem {
+  label: string;
+  icon?: string;
+  route: ROUTER | string;
+  command?: () => void;
+}
 
 const DashboardLayout = ({
   children,
 }: Readonly<{ children: React.ReactNode }>) => {
-  const [activeItem, setActiceItem] = useState<HEADER_ITEM_DASHBOARD>(
-    HEADER_ITEM_DASHBOARD.VOCAB
-  );
+  const pathName = usePathname();
+  const params = useParams();
   const { redirectScreen } = useRouteControl();
-  const headerItems = [
-    { label: HEADER_ITEM_DASHBOARD.VOCAB, route: ROUTER.VOCAB },
-    { label: HEADER_ITEM_DASHBOARD.PRACTICE, route: ROUTER.PRACTICE },
-  ];
+  const [breadcrumbModel, setBreadcrumbModel] = useState<BreadCrumbItem[]>([]);
+  const home = { icon: "pi pi-home", url: ROUTER.HOME };
 
-  const handleOnClickItem = (item: {
-    label: HEADER_ITEM_DASHBOARD;
-    route: ROUTER;
-  }) => {
-    if (item.label !== activeItem) {
-      setActiceItem(item.label);
-      redirectScreen(item.route);
+  useEffect(() => {
+    if (pathName === ROUTER.DASHBOARD) {
+      setBreadcrumbModel([{ label: "Dashboard", route: ROUTER.DASHBOARD }]);
+    } else if (pathName?.startsWith(ROUTER.FLASHCARD)) {
+      const parts = pathName.split("/");
+      // parts: ["", "dashboard", "flashcard", "1", "new"]
+      const id = parts.length > 3 ? parts[3] : undefined;
+      const isNew = parts.length > 4 && parts[4] === "new";
+
+      const flashcardName = id ? `Flashcard ${id}` : "";
+      const model: BreadCrumbItem[] = [
+        { label: "Dashboard", route: ROUTER.DASHBOARD },
+        { label: "Flashcards", route: ROUTER.FLASHCARD },
+      ];
+      if (id) {
+        model.push({
+          label: flashcardName,
+          route: ROUTER.FLASHCARD_DETAIL + id,
+        });
+      }
+      if (isNew) {
+        model.push({
+          label: "New Card",
+          route: ROUTER.FLASHCARD_DETAIL + id + "/new",
+        });
+      }
+      setBreadcrumbModel(model);
     }
-  };
+  }, [pathName, params]);
+
   return (
     <div className="flex flex-col pb-2 gap-y-2 ssm-under:px-[var(--padding-center-mobile)]">
-      <CustomText
-        text="WELCOME TO DASHBOARD"
-        size={28}
-        weight="bold"
-        color="primary"
+      <BreadCrumb
+        model={breadcrumbModel.map((item) => ({
+          ...item,
+          command: item.route ? () => redirectScreen(item.route) : undefined,
+        }))}
+        home={home}
       />
-      <div className="flex flex-wrap items-center border-t-2 border-gray-100 border-b-2 px-4 py-2 gap-y-4">
-        {headerItems.map((item, index) => {
-          return (
-            <div
-              key={index}
-              className={`flex flex-row items-center justify-center bg-[var(--color-primary-light)] rounded-sm scale-animation-active text-white
-                ${
-                  activeItem === item.label
-                    ? "w-[175px] h-[50px] bg-[var(--color-primary)] "
-                    : "w-[155px] h-[40px]"
-                }`}
-              style={{
-                clipPath: "polygon(25% 0%, 100% 0%, 75% 100%, 0% 100%)",
-              }}
-              onClick={() => handleOnClickItem(item)}
-            >
-              <div
-                className={`font-bold mx-4 ${
-                  activeItem === item.label ? "text-[1.2rem]" : "text-[1rem]"
-                }`}
-              >
-                {item.label}
-              </div>
-            </div>
-          );
-        })}
-      </div>
       {children}
     </div>
   );
