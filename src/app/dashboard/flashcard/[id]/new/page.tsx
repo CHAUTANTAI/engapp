@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import {
@@ -15,7 +16,7 @@ import { useParams } from "next/navigation";
 import { useRouteControl } from "../../../../../hook/routeControl";
 import { classNames } from "primereact/utils";
 import { useState } from "react";
-import { getFlashcardDetailRoute } from "../../page";
+import { getFlashcardDetailRoute } from "../../../../../util/funs";
 
 // Interface gốc từ page.tsx
 interface Definition {
@@ -383,12 +384,9 @@ const DefinitionsFieldArray = ({
   control,
   errors,
 }: DefinitionsFieldArrayProps) => {
-  const { fields, append, remove } = useFieldArray<
-    CardFormValues,
-    `variants.${number}.definitions`
-  >({
+  const { fields, append, remove } = useFieldArray<CardFormValues, any>({
     control,
-    name: `variants.${nestIndex}.definitions`,
+    name: `variants.${nestIndex}.definitions` as any,
   });
 
   return (
@@ -530,10 +528,9 @@ const ExamplesFieldArray = ({
   defIndex,
   control,
 }: ExamplesFieldArrayProps) => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { fields, append, remove } = useFieldArray<CardFormValues, any>({
     control,
-    name: `variants.${nestIndex}.definitions.${defIndex}.examples`,
+    name: `variants.${nestIndex}.definitions.${defIndex}.examples` as any,
   });
   return (
     <div>
@@ -577,10 +574,8 @@ const CollocationsFieldArray = ({
   defIndex,
   control,
 }: CollocationsFieldArrayProps) => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const { fields, append, remove } = useFieldArray<CardFormValues, any>({
     control,
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     name: `variants.${nestIndex}.definitions.${defIndex}.collocations` as any,
   });
   return (
@@ -717,7 +712,7 @@ function ArrayField<T extends object>({
           {itemFields.map((f) => (
             <Controller
               key={String(f.name)}
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+               
               name={`${name}.${idx}.${String(f.name)}` as any}
               control={control}
               render={({ field }) => (

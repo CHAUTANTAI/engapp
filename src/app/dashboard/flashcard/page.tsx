@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useRouteControl } from "../../../hook/routeControl";
 import { ROUTER } from "../../../const/routers";
 import { Button } from "primereact/button";
+import { getFlashcardDetailRoute } from "../../../util/funs";
 
 interface Flashcard {
   flashcardId: number;
@@ -12,9 +13,6 @@ interface Flashcard {
   flashcardDescription: string;
   numberOfCards: number;
 }
-export const getFlashcardDetailRoute = (id: string | number) =>
-  `${ROUTER.FLASHCARD_DETAIL + id}`;
-
 const FlashcardPage = () => {
   const [flashcards, setFlashcards] = useState<Flashcard[]>([]);
   const { redirectScreen } = useRouteControl();
