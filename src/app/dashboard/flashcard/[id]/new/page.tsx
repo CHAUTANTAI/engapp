@@ -70,6 +70,14 @@ const CardNewPage = () => {
   const { redirectScreen } = useRouteControl();
   const [loading, setLoading] = useState(false);
 
+  const [variantOpen, setVariantOpen] = useState<{ [idx: number]: boolean }>({
+    [0]: true,
+  });
+
+  const [definitionOpen, setDefinitionOpen] = useState<{
+    [vIdx: number]: { [dIdx: number]: boolean };
+  }>({ [0]: { [0]: true } });
+
   const {
     control,
     handleSubmit,
@@ -158,7 +166,7 @@ const CardNewPage = () => {
   return (
     <div className="flex flex-col items-center w-full min-h-[80vh] bg-white pt-6">
       {/* Top buttons */}
-      <div className="flex w-full max-w-xl justify-between mb-6">
+      <div className="flex w-full max-w-3xl justify-between mb-6">
         <Button
           label="Back"
           icon="pi pi-arrow-left"
@@ -178,13 +186,13 @@ const CardNewPage = () => {
           onClick={handleSubmit(onSubmit)}
         />
       </div>
-      <PrimeCard className="w-full max-w-xl shadow-md border-1 border-gray-200">
+      <PrimeCard className="w-full max-w-3xl shadow-md border-1 border-gray-200">
         <form className="flex flex-col gap-y-5">
           {/* Entry */}
           <div className="flex flex-col gap-y-2">
             <label
               htmlFor="entry"
-              className="font-semibold text-[1.1rem] text-[var(--primaryColor)]"
+              className="font-bold text-[1.5rem] text-[var(--primaryColor)]"
             >
               Entry <span className="text-red-500">*</span>
             </label>
@@ -210,7 +218,7 @@ const CardNewPage = () => {
           </div>
           {/* Variants */}
           <div className="flex flex-col gap-y-2">
-            <label className="font-semibold text-[1.1rem] text-[var(--primaryColor)]">
+            <label className="font-bold text-[1.5rem] text-[var(--primaryColor)]">
               Variants
             </label>
             {variantFields.map((variant, vIdx) => (
@@ -218,85 +226,130 @@ const CardNewPage = () => {
                 key={variant.id}
                 className="border p-3 rounded mb-3 bg-gray-50"
               >
-                <div className="flex gap-2 mb-2">
-                  <Controller
-                    name={`variants.${vIdx}.part_of_speech`}
-                    control={control}
-                    rules={{ required: "Part of speech is required" }}
-                    render={({ field }) => (
-                      <InputText
-                        {...field}
-                        className={classNames("w-1/2", {
-                          "p-invalid": errors.variants?.[vIdx]?.part_of_speech,
-                        })}
-                        placeholder="Part of speech (e.g. noun, verb)"
-                      />
-                    )}
-                  />
-                  <Controller
-                    name={`variants.${vIdx}.pronunciation.UK`}
-                    control={control}
-                    render={({ field }) => (
-                      <InputText
-                        {...field}
-                        className="w-1/4"
-                        placeholder="UK"
-                      />
-                    )}
-                  />
-                  <Controller
-                    name={`variants.${vIdx}.pronunciation.US`}
-                    control={control}
-                    render={({ field }) => (
-                      <InputText
-                        {...field}
-                        className="w-1/4"
-                        placeholder="US"
-                      />
-                    )}
-                  />
+                <div className="w-full h-max flex flex-row items-center justify-between">
+                  <span className="font-extrabold text-[var(--red-500)] text-[1.4rem] underline underline-offset-4">
+                    Variant {vIdx + 1}
+                  </span>
                   <Button
-                    icon="pi pi-trash"
-                    severity="danger"
+                    icon={
+                      variantOpen[vIdx]
+                        ? "pi pi-chevron-up"
+                        : "pi pi-chevron-down"
+                    }
+                    severity="info"
                     text
+                    rounded
                     type="button"
-                    className="ml-2"
-                    onClick={() => removeVariant(vIdx)}
-                    disabled={variantFields.length === 1}
-                  />
+                    size="large"
+                    onClick={() =>
+                      setVariantOpen((prev) => ({
+                        ...prev,
+                        [vIdx]: !prev[vIdx],
+                      }))
+                    }
+                  ></Button>
                 </div>
-                <div className="flex gap-2 mb-2">
-                  <Controller
-                    name={`variants.${vIdx}.frequency`}
-                    control={control}
-                    render={({ field }) => (
-                      <InputText
-                        {...field}
-                        className="w-1/2"
-                        placeholder="Frequency (e.g. A1, B2)"
+                {variantOpen[vIdx] !== false && (
+                  <>
+                    <div className="flex gap-2 mb-2 mt-4">
+                      <Controller
+                        name={`variants.${vIdx}.part_of_speech`}
+                        control={control}
+                        rules={{ required: "Part of speech is required" }}
+                        render={({ field }) => (
+                          <InputText
+                            {...field}
+                            className={classNames("w-1/2", {
+                              "p-invalid":
+                                errors.variants?.[vIdx]?.part_of_speech,
+                            })}
+                            placeholder="Part of speech (e.g. noun, verb)"
+                          />
+                        )}
                       />
-                    )}
-                  />
-                  <Controller
-                    name={`variants.${vIdx}.cefr_level`}
-                    control={control}
-                    render={({ field }) => (
-                      <InputText
-                        {...field}
-                        className="w-1/2"
-                        placeholder="CEFR Level"
+                      <Controller
+                        name={`variants.${vIdx}.pronunciation.UK`}
+                        control={control}
+                        render={({ field }) => (
+                          <InputText
+                            {...field}
+                            className="w-1/4"
+                            placeholder="UK"
+                          />
+                        )}
                       />
-                    )}
-                  />
-                </div>
-                {/* Definitions FieldArray */}
-                <DefinitionsFieldArray
-                  nestIndex={vIdx}
-                  control={control}
-                  errors={errors}
-                />
-                {/* Phrasal Verbs FieldArray */}
-                <PhrasalVerbsFieldArray nestIndex={vIdx} control={control} />
+                      <Controller
+                        name={`variants.${vIdx}.pronunciation.US`}
+                        control={control}
+                        render={({ field }) => (
+                          <InputText
+                            {...field}
+                            className="w-1/4"
+                            placeholder="US"
+                          />
+                        )}
+                      />
+                    </div>
+                    <div className="flex gap-2 mb-2">
+                      <Controller
+                        name={`variants.${vIdx}.frequency`}
+                        control={control}
+                        render={({ field }) => (
+                          <InputText
+                            {...field}
+                            className="w-1/2"
+                            placeholder="Frequency (e.g. A1, B2)"
+                          />
+                        )}
+                      />
+                      <Controller
+                        name={`variants.${vIdx}.cefr_level`}
+                        control={control}
+                        render={({ field }) => (
+                          <InputText
+                            {...field}
+                            className="w-1/2"
+                            placeholder="CEFR Level"
+                          />
+                        )}
+                      />
+                    </div>
+                    {/* Definitions FieldArray */}
+                    <DefinitionsFieldArray
+                      nestIndex={vIdx}
+                      control={control}
+                      errors={errors}
+                      definitionOpen={definitionOpen[vIdx] || {}}
+                      setDefinitionOpen={(dIdx, open) =>
+                        setDefinitionOpen((prev) => ({
+                          ...prev,
+                          [vIdx]: { ...prev[vIdx], [dIdx]: open },
+                        }))
+                      }
+                    />
+                    {/* Phrasal Verbs FieldArray */}
+                    <PhrasalVerbsFieldArray
+                      nestIndex={vIdx}
+                      control={control}
+                    />
+                    <div className="flex flex-row justify-end">
+                      <Button
+                        icon="pi pi-trash"
+                        severity="danger"
+                        type="button"
+                        className="p-2 flex items-center justify-center gap-x-1"
+                        raised
+                        size="large"
+                        onClick={() => removeVariant(vIdx)}
+                        disabled={variantFields.length === 1}
+                      >
+                        <span className="text-[1rem] font-semibold pt-.5">
+                          Variant
+                        </span>
+                      </Button>
+                    </div>
+                  </>
+                )}
               </div>
             ))}
             <Button
@@ -305,7 +358,7 @@ const CardNewPage = () => {
               type="button"
               outlined
               className="w-fit mt-2"
-              onClick={() =>
+              onClick={() => {
                 appendVariant({
                   part_of_speech: "",
                   pronunciation: { UK: "", US: "" },
@@ -326,8 +379,12 @@ const CardNewPage = () => {
                   frequency: "",
                   cefr_level: "",
                   phrasal_verbs: [],
-                })
-              }
+                });
+                setVariantOpen((prev) => ({
+                  ...prev,
+                  [variantFields.length]: true,
+                }));
+              }}
             />
           </div>
           {/* Idioms */}
@@ -378,11 +435,15 @@ interface DefinitionsFieldArrayProps {
   nestIndex: number;
   control: Control<CardFormValues>;
   errors: FieldErrors<CardFormValues>;
+  definitionOpen: { [dIdx: number]: boolean };
+  setDefinitionOpen: (dIdx: number, open: boolean) => void;
 }
 const DefinitionsFieldArray = ({
   nestIndex,
   control,
   errors,
+  definitionOpen,
+  setDefinitionOpen,
 }: DefinitionsFieldArrayProps) => {
   const { fields, append, remove } = useFieldArray<CardFormValues, any>({
     control,
@@ -391,105 +452,141 @@ const DefinitionsFieldArray = ({
 
   return (
     <div className="mt-2">
-      <label className="font-semibold">Definitions</label>
+      <label className="font-bold text-[1.2rem]">Definitions</label>
       {fields.map((def, dIdx) => (
         <div
           key={def.id}
-          className="flex flex-col gap-2 mb-2 border p-2 rounded bg-white"
+          className="flex flex-col gap-2 mb-2 border p-3 rounded bg-white"
         >
-          <Controller
-            name={`variants.${nestIndex}.definitions.${dIdx}.definition`}
-            control={control}
-            rules={{ required: "Definition is required" }}
-            render={({ field }) => (
-              <InputText
-                {...field}
-                className={classNames("w-full", {
-                  "p-invalid":
-                    errors?.variants?.[nestIndex]?.definitions?.[dIdx]
-                      ?.definition,
-                })}
-                placeholder="Definition"
-              />
-            )}
-          />
-          {/* Examples FieldArray */}
-          <ExamplesFieldArray
-            nestIndex={nestIndex}
-            defIndex={dIdx}
-            control={control}
-          />
-          {/* Grammar */}
-          <div className="flex gap-2">
-            <Controller
-              name={`variants.${nestIndex}.definitions.${dIdx}.grammar.transitivity`}
-              control={control}
-              render={({ field }) => (
-                <InputText
-                  {...field}
-                  className="w-1/4"
-                  placeholder="Transitivity"
-                />
-              )}
-            />
-            <Controller
-              name={`variants.${nestIndex}.definitions.${dIdx}.grammar.tense`}
-              control={control}
-              render={({ field }) => (
-                <InputText {...field} className="w-1/4" placeholder="Tense" />
-              )}
-            />
-            <Controller
-              name={`variants.${nestIndex}.definitions.${dIdx}.grammar.label`}
-              control={control}
-              render={({ field }) => (
-                <InputText
-                  {...field}
-                  className="w-1/4"
-                  placeholder="Label (e.g. [T], [I])"
-                />
-              )}
-            />
-            <Controller
-              name={`variants.${nestIndex}.definitions.${dIdx}.grammar.countability`}
-              control={control}
-              render={({ field }) => (
-                <InputText
-                  {...field}
-                  className="w-1/4"
-                  placeholder="Countability"
-                />
-              )}
+          {/* Definition Header*/}
+          <div className="w-full h-max flex flex-row items-center justify-between">
+            <span className="font-bold text-[var(--orange-500)] text-[1.1rem] underline underline-offset-2">
+              Definition {dIdx + 1}
+            </span>
+            <Button
+              icon={
+                definitionOpen[dIdx] ? "pi pi-chevron-up" : "pi pi-chevron-down"
+              }
+              severity="info"
+              text
+              rounded
+              type="button"
+              size="small"
+              onClick={() => setDefinitionOpen(dIdx, !definitionOpen[dIdx])}
             />
           </div>
-          {/* Collocations FieldArray */}
-          <CollocationsFieldArray
-            nestIndex={nestIndex}
-            defIndex={dIdx}
-            control={control}
-          />
-          {/* Usage Notes */}
-          <Controller
-            name={`variants.${nestIndex}.definitions.${dIdx}.usage_notes`}
-            control={control}
-            render={({ field }) => (
-              <InputTextarea
-                {...field}
-                className="w-full"
-                placeholder="Usage notes"
-                autoResize
+          {definitionOpen[dIdx] !== false && (
+            <>
+              {/* Definition Field */}
+              <Controller
+                name={`variants.${nestIndex}.definitions.${dIdx}.definition`}
+                control={control}
+                rules={{ required: "Definition is required" }}
+                render={({ field }) => (
+                  <InputText
+                    {...field}
+                    className={classNames("w-full", {
+                      "p-invalid":
+                        errors?.variants?.[nestIndex]?.definitions?.[dIdx]
+                          ?.definition,
+                    })}
+                    placeholder="Definition"
+                  />
+                )}
               />
-            )}
-          />
-          <Button
-            icon="pi pi-trash"
-            severity="danger"
-            text
-            type="button"
-            className="w-fit"
-            onClick={() => remove(dIdx)}
-            disabled={fields.length === 1}
-          />
+              {/* Examples FieldArray */}
+              <ExamplesFieldArray
+                nestIndex={nestIndex}
+                defIndex={dIdx}
+                control={control}
+              />
+              {/* Grammar */}
+              <label className="font-semibold">Grammar</label>
+              <div className="flex gap-2">
+                <Controller
+                  name={`variants.${nestIndex}.definitions.${dIdx}.grammar.transitivity`}
+                  control={control}
+                  render={({ field }) => (
+                    <InputText
+                      {...field}
+                      className="w-1/4"
+                      placeholder="Transitivity"
+                    />
+                  )}
+                />
+                <Controller
+                  name={`variants.${nestIndex}.definitions.${dIdx}.grammar.tense`}
+                  control={control}
+                  render={({ field }) => (
+                    <InputText
+                      {...field}
+                      className="w-1/4"
+                      placeholder="Tense"
+                    />
+                  )}
+                />
+                <Controller
+                  name={`variants.${nestIndex}.definitions.${dIdx}.grammar.label`}
+                  control={control}
+                  render={({ field }) => (
+                    <InputText
+                      {...field}
+                      className="w-1/4"
+                      placeholder="Label (e.g. [T], [I])"
+                    />
+                  )}
+                />
+                <Controller
+                  name={`variants.${nestIndex}.definitions.${dIdx}.grammar.countability`}
+                  control={control}
+                  render={({ field }) => (
+                    <InputText
+                      {...field}
+                      className="w-1/4"
+                      placeholder="Countability"
+                    />
+                  )}
+                />
+              </div>
+              {/* Collocations FieldArray */}
+              <CollocationsFieldArray
+                nestIndex={nestIndex}
+                defIndex={dIdx}
+                control={control}
+              />
+              {/* Usage Notes */}
+
+              <label className="font-semibold">Usage notes</label>
+              <Controller
+                name={`variants.${nestIndex}.definitions.${dIdx}.usage_notes`}
+                control={control}
+                render={({ field }) => (
+                  <InputTextarea
+                    {...field}
+                    className="w-full"
+                    placeholder="Usage notes"
+                    autoResize
+                  />
+                )}
+              />
+              <div className="flex flex-row justify-end">
+                <Button
+                  icon="pi pi-trash"
+                  severity="danger"
+                  type="button"
+                  className="p-2 flex items-center justify-center gap-x-1"
+                  raised
+                  size="large"
+                  onClick={() => remove(dIdx)}
+                  disabled={fields.length === 1}
+                >
+                  <span className="text-[1rem] font-semibold pt-.5">
+                    Definition
+                  </span>
+                </Button>
+              </div>
+            </>
+          )}
         </div>
       ))}
       <Button
@@ -498,7 +595,7 @@ const DefinitionsFieldArray = ({
         type="button"
         outlined
         className="w-fit mt-1"
-        onClick={() =>
+        onClick={() => {
           append({
             definition: "",
             examples: [""],
@@ -510,8 +607,9 @@ const DefinitionsFieldArray = ({
             },
             collocations: [""],
             usage_notes: "",
-          })
-        }
+          });
+          setDefinitionOpen(fields.length, true);
+        }}
       />
     </div>
   );
@@ -533,10 +631,10 @@ const ExamplesFieldArray = ({
     name: `variants.${nestIndex}.definitions.${defIndex}.examples` as any,
   });
   return (
-    <div>
-      <label>Examples</label>
+    <div className="flex flex-col gap-2 mb-2">
+      <label className="font-semibold">Examples</label>
       {fields.map((item, idx) => (
-        <div key={item.id} className="flex gap-2 mb-1">
+        <div key={item.id} className="flex flex-row gap-2 mb-1">
           <Controller
             name={`variants.${nestIndex}.definitions.${defIndex}.examples.${idx}`}
             control={control}
@@ -579,8 +677,8 @@ const CollocationsFieldArray = ({
     name: `variants.${nestIndex}.definitions.${defIndex}.collocations` as any,
   });
   return (
-    <div>
-      <label>Collocations</label>
+    <div className="flex flex-col gap-2 mb-2">
+      <label className="font-semibold">Collocations</label>
       {fields.map((item, idx) => (
         <div key={item.id} className="flex gap-2 mb-1">
           <Controller
@@ -631,8 +729,8 @@ const PhrasalVerbsFieldArray = ({
     name: `variants.${nestIndex}.phrasal_verbs`,
   });
   return (
-    <div className="mt-2">
-      <label className="font-semibold">Phrasal Verbs</label>
+    <div className="flex flex-col gap-2 mt-2 mb-2">
+      <label className="font-bold text-[1.2rem]">Phrasal Verbs</label>
       {fields.map((item, idx) => (
         <div key={item.id} className="flex gap-2 items-center mb-2">
           <Controller
@@ -712,7 +810,6 @@ function ArrayField<T extends object>({
           {itemFields.map((f) => (
             <Controller
               key={String(f.name)}
-               
               name={`${name}.${idx}.${String(f.name)}` as any}
               control={control}
               render={({ field }) => (
