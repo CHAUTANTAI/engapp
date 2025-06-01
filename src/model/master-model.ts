@@ -4,6 +4,11 @@ export interface PagingModel {
   top: number | null;
 }
 
+export interface ListPagingModel {
+  offset: number;
+  limit: number;
+}
+
 export interface GetListModel {
   total_records: number;
 }

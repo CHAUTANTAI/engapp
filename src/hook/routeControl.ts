@@ -1,14 +1,20 @@
-"use client";
 import { useRouter } from "next/navigation";
+import { useCallback } from "react";
 import { ROUTER } from "../const/routers";
 
 export const useRouteControl = () => {
   const router = useRouter();
 
-  const redirectScreen = (newUrl: ROUTER | string) => {
-    console.log("Redirecting to:", newUrl);
-    router.push(newUrl);
-  };
+  const redirectScreen = useCallback(
+    (path: ROUTER | string) => {
+      router.push(path);
+    },
+    [router]
+  );
 
-  return { redirectScreen };
+  const back = useCallback(() => {
+    router.back();
+  }, [router]);
+
+  return { redirectScreen, back };
 };

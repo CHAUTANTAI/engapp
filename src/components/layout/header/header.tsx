@@ -2,9 +2,9 @@ import { useState, useEffect, useMemo } from "react";
 import { Sidebar } from "primereact/sidebar";
 import { Button } from "primereact/button";
 import { Menu } from "primereact/menu";
-import { useRouteControl } from "../../../hook/routeControl";
-import { ROUTER } from "../../../const/routers";
-import { HEADER_ITEM } from "../../../const/label";
+import { useRouteControl } from "@/hook/routeControl";
+import { ROUTER } from "@/const/routers";
+import { HEADER_ITEM } from "@/const/label";
 
 interface HeaderItem {
   label: string;
@@ -19,7 +19,7 @@ export default function Header() {
 
   const items: HeaderItem[] = [
     { label: HEADER_ITEM.HOME, route: ROUTER.HOME },
-    { label: HEADER_ITEM.DASHBOARD, route: ROUTER.VOCAB },
+    { label: HEADER_ITEM.DASHBOARD, route: ROUTER.DASHBOARD },
     { label: HEADER_ITEM.ACCOUNT, route: ROUTER.ACCOUNT },
   ];
 

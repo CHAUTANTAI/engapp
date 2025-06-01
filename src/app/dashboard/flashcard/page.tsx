@@ -1,80 +1,32 @@
 "use client";
 
 import { DataView } from "primereact/dataview";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 import { useRouteControl } from "../../../hook/routeControl";
 import { ROUTER } from "../../../const/routers";
 import { Button } from "primereact/button";
 import { getFlashcardDetailRoute } from "../../../util/funs";
+import { useDeckStore } from "../../../store/deck-store";
 
-interface Flashcard {
-  flashcardId: number;
-  flashcardName: string;
-  flashcardDescription: string;
-  numberOfCards: number;
+interface Deck {
+  deck_id: number;
+  deck_name: string;
+  deck_description: string;
 }
 const FlashcardPage = () => {
-  const [flashcards, setFlashcards] = useState<Flashcard[]>([]);
+  const { decks_data, getDecks } = useDeckStore();
   const { redirectScreen } = useRouteControl();
-  const handleGetFlashcards = async () => {
-    // const response = await fetch(
-    //   "https://api.example.com/flashcards"
-    // );
-    // const data = await response.json();
-    const flashcardData: Flashcard[] = [
-      {
-        flashcardId: 1,
-        flashcardName: "France Capital",
-        flashcardDescription: "What is the capital of France?",
-        numberOfCards: 1,
-      },
-      {
-        flashcardId: 2,
-        flashcardName: "Largest Planet",
-        flashcardDescription: "What is the largest planet in our solar system?",
-        numberOfCards: 1,
-      },
-      {
-        flashcardId: 3,
-        flashcardName: "Gold Symbol",
-        flashcardDescription: "What is the chemical symbol for gold?",
-        numberOfCards: 1,
-      },
-      {
-        flashcardId: 4,
-        flashcardName: "Vietnam Capital",
-        flashcardDescription: "What is the capital of Vietnam?",
-        numberOfCards: 1,
-      },
-      {
-        flashcardId: 5,
-        flashcardName: "Water Formula",
-        flashcardDescription: "What is the chemical formula for water?",
-        numberOfCards: 1,
-      },
-      {
-        flashcardId: 6,
-        flashcardName: "Vietnam Capital",
-        flashcardDescription: "What is the capital of Vietnam?",
-        numberOfCards: 1,
-      },
-      {
-        flashcardId: 7,
-        flashcardName: "Water Formula",
-        flashcardDescription: "What is the chemical formula for water?",
-        numberOfCards: 1,
-      },
-    ];
-    setFlashcards(flashcardData);
-  };
-  const listTemplate = (flashcard: Flashcard) => {
+  const handleGetFlashcards = useCallback(async () => {
+    await getDecks();
+  }, [getDecks]);
+  const listTemplate = (deck: Deck) => {
     return (
       <div
         className="w-[31%] h-[20vh] m-2 pt-0 flex flex-col p-4 border-1 border-gray-200 rounded-lg cursor-pointer hover:shadow-lg transition-shadow duration-200 ease-in-out"
-        onClick={() => handleFlashcardClick(flashcard.flashcardId)}
+        onClick={() => handleFlashcardClick(deck.deck_id)}
       >
-        <h3 className="text-lg font-semibold">{flashcard.flashcardName}</h3>
-        <p className="mt-0 text-gray-600">{flashcard.flashcardDescription}</p>
+        <h3 className="text-lg font-semibold">{deck.deck_name}</h3>
+        <p className="mt-0 text-gray-600">{deck.deck_description}</p>
       </div>
     );
   };
@@ -89,7 +41,7 @@ const FlashcardPage = () => {
 
   useEffect(() => {
     handleGetFlashcards();
-  }, []);
+  }, [handleGetFlashcards]);
   return (
     <>
       <Button
@@ -104,7 +56,7 @@ const FlashcardPage = () => {
         </div>
       </Button>
       <DataView
-        value={flashcards}
+        value={decks_data}
         itemTemplate={listTemplate}
         paginator
         rows={6}

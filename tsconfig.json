@@ -1,5 +1,9 @@
 {
   "compilerOptions": {
+    "baseUrl": "./src",
+    "paths": {
+      "@/*": ["*"]
+    },
     "target": "es5",
     "lib": ["dom", "esnext"],
     "jsx": "preserve", // Hoặc "react" nếu dùng phiên bản cũ hơn

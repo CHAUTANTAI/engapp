@@ -1,23 +1,22 @@
 // src/app/layout.tsx
 "use client";
-import "../styles/custom-css/index.scss";
+import "@/styles/custom-css/index.scss";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Header from "../components/layout/header/header";
-import { Footer } from "../components/layout/footer/footer";
+import Header from "@/components/layout/header/header";
+import { Footer } from "@/components/layout/footer/footer";
 import { usePathname, redirect } from "next/navigation";
-import { useMasterDataStore } from "../store/master-data-store";
+import { useMasterDataStore } from "@/store/master-data-store";
 
 import { metadata } from "./metadata";
-import { ROUTER } from "../const/routers";
-import { LoadingDialog } from "../components/common/loading/loadingDialog";
-import { useCommonStore } from "../store/common-store";
-import { useAuthCookies } from "../hook/cookies";
+import { ROUTER } from "@/const/routers";
+import { LoadingDialog } from "@/components/common/loading/loadingDialog";
+import { useCommonStore } from "@/store/common-store";
+import { useAuthCookies } from "@/hook/cookies";
 import { useEffect, useState } from "react";
-import { useAuthStore } from "../store/auth-store";
+import { useAuthStore } from "@/store/auth-store";
 import { PrimeReactProvider } from "primereact/api";
-import { PanelMenu } from "primereact/panelmenu";
-import { useRouteControl } from "../hook/routeControl";
+import { SidebarMenu } from "@/components/layout/sidebar-menu/sidebar-menu";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -50,10 +49,11 @@ export default function RootLayout({
   const account_id = getAccountIdCookie() || undefined;
   const {} = useAuthStore();
   const [sidebarModel, setSidebarModel] = useState<MenuItem[]>([]);
-  const { redirectScreen } = useRouteControl();
 
   const homeSidebarModel: MenuItem[] = [];
   const dashboardSidebarModel: MenuItem[] = [
+    { label: "Dashboard", icon: "pi pi-credit-card", route: ROUTER.DASHBOARD },
+    { label: "Decks", icon: "pi pi-server", route: ROUTER.DECK },
     { label: "Flashcards", icon: "pi pi-clone", route: ROUTER.FLASHCARD },
     { label: "More", icon: "pi pi-ellipsis-h" },
   ];
@@ -98,7 +98,7 @@ export default function RootLayout({
         <title>{metadata.title}</title>
       </head>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col text-black`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen flex flex-col text-black overflow-x-hidden`}
       >
         {pathName !== ROUTER.LOGIN && pathName !== ROUTER.REGISTER ? (
           <>
@@ -112,30 +112,7 @@ export default function RootLayout({
                 style={{ minHeight: "0" }}
               >
                 {sidebarModel.length > 0 && (
-                  <aside
-                    className="w-64 min-w-56 max-w-xs "
-                    style={{
-                      position: "sticky",
-                      top: "80px",
-                      alignSelf: "flex-start",
-                      maxHeight: "calc(100vh - 80px)",
-                      minHeight: "calc(100vh - 80px)",
-                      overflowY: "auto",
-                      background: "#fff",
-                      borderRight: "1px solid #e5e7eb",
-                      zIndex: 20,
-                    }}
-                  >
-                    <PanelMenu
-                      model={sidebarModel.map((item) => ({
-                        ...item,
-                        command: item.route
-                          ? () => redirectScreen(ROUTER.FLASHCARD)
-                          : undefined,
-                      }))}
-                      className="h-full "
-                    />
-                  </aside>
+                  <SidebarMenu model={sidebarModel} />
                 )}
                 <main className="flex-1 overflow-y-auto p-1">{children}</main>
               </div>

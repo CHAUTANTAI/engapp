@@ -1,20 +1,45 @@
 // src/util/api/base-api.ts
 import axios, { AxiosRequestConfig } from "axios";
 
-export interface BaseResponse<T = void> {
+// Common interface for error response
+export interface ErrorModel {
+  error?: string | null;
+}
+
+// Common interface for paging request
+export interface PagingReqModel {
+  offset?: number;
+  limit?: number;
+}
+
+// Common interface for paging response
+export interface PagingResModel {
+  total_count: number;
+}
+
+// Response structure matching your backend format
+export interface ApiResponse<T = unknown> {
+  total_count: number;
+  data: T | null;
+  error: string | null;
+}
+
+// Final return value from this utility
+export interface BaseResponse<T = unknown> {
   status: number;
   data: T | null;
+  total_count: number;
+  error: string | null;
 }
 
 interface APIProps {
   method: "GET" | "POST" | "PUT" | "DELETE";
   url: string;
   body?: unknown;
-  // params?: Record<string, unknown>;
   params?: unknown;
 }
-// axios config
-const createAPI = async <T>({
+
+const createAPI = async <T = unknown>({
   body,
   method,
   params,
@@ -24,35 +49,35 @@ const createAPI = async <T>({
     baseURL: "/api/",
     method,
     url,
-    data: body, // POST, PUT
-    params, // GET, DELETE
+    data: body,
+    params,
     headers: {
-      "Content-Type": "application/json", // JSON type for send and get
+      "Content-Type": "application/json",
     },
-    timeout: 10000, // set timeout
+    timeout: 10000,
   };
 
   try {
-    const response = await axios(config);
-    return response as BaseResponse<T>;
+    const response = await axios.request<ApiResponse<T>>(config);
+    const { total_count, data, error } = response.data;
+
+    return {
+      status: response.status,
+      data,
+      total_count,
+      error,
+    };
   } catch (error: unknown) {
     if (axios.isAxiosError(error) && error.response) {
-      // server error (status code 4xx, 5xx)
-      throw new Error(
-        error.response.data?.message || "An error occurred on the server"
-      );
-    } else if ((error as Error).message) {
-      // (network error or timeout)
-      console.error("API request error: No response received");
-      throw new Error("Network error or request timeout");
-    } else {
-      // config request error
-      console.error(
-        "API request configuration error:",
-        (error as Error).message
-      );
-      throw new Error((error as Error).message || "Error configuring request");
+      const responseData = error.response.data as ApiResponse<T>;
+      throw new Error(responseData?.error || "Server error");
     }
+
+    if (error instanceof Error) {
+      throw new Error(error.message || "Unknown client error");
+    }
+
+    throw new Error("Unknown error occurred");
   }
 };
 

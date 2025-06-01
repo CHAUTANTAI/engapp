@@ -16,7 +16,8 @@ import { useParams } from "next/navigation";
 import { useRouteControl } from "../../../../../hook/routeControl";
 import { classNames } from "primereact/utils";
 import { useState } from "react";
-import { getFlashcardDetailRoute } from "../../../../../util/funs";
+import { getDetailRoute } from "../../../../../util/funs";
+import { ROUTER } from "../../../../../const/routers";
 
 // Interface gốc từ page.tsx
 interface Definition {
@@ -159,7 +160,7 @@ const CardNewPage = () => {
     setTimeout(() => {
       setLoading(false);
       reset();
-      redirectScreen(getFlashcardDetailRoute(params?.id as string));
+      redirectScreen(getDetailRoute(params?.id as string, ROUTER.DECK_DETAIL));
     }, 1200);
   };
 
@@ -174,7 +175,9 @@ const CardNewPage = () => {
           outlined
           className="w-[48%]"
           onClick={() =>
-            redirectScreen(getFlashcardDetailRoute(params?.id as string))
+            redirectScreen(
+              getDetailRoute(params?.id as string, ROUTER.DECK_DETAIL)
+            )
           }
         />
         <Button
