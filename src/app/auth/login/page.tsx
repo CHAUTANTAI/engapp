@@ -1,9 +1,6 @@
 "use client";
-import { InputControl } from "../../../components/common/control/input/inputControl";
 import FormWrapper from "../../../components/form/form";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { AuthSchema, AuthSchemaType } from "../../../schema/login-schema";
+import {  useForm } from "react-hook-form";
 import { Checkbox } from "../../../components/common/control/checkboxControl";
 import { Label } from "../../../components/common/component/label";
 import { useLoginStore } from "../../../store/login-store";
@@ -16,6 +13,8 @@ import { useMasterDataStore } from "../../../store/master-data-store";
 import { useAuthCookies } from "../../../hook/cookies";
 import { useAuthStore } from "../../../store/auth-store";
 import { Button } from "primereact/button";
+import { InputTextControl } from "@/components/common/form/input-text";
+import { LoginModel } from "@/model/account-model";
 
 const Login = () => {
   const { mode } = useLoginStore();
@@ -25,9 +24,8 @@ const Login = () => {
   const { session } = useMasterDataStore();
   const { setAuthCookie, setAccountIdCookie } = useAuthCookies();
   const {} = useAuthStore();
-  const methods = useForm({
-    resolver: zodResolver(AuthSchema),
-    mode: "onChange",
+  const methods = useForm<LoginModel>({
+    mode: "onSubmit",
     defaultValues: {
       email: "",
       password: "",
@@ -35,16 +33,15 @@ const Login = () => {
     },
   });
 
-  const onSubmit: SubmitHandler<AuthSchemaType> = async (
-    data: AuthSchemaType
-  ) => {
+  const onSubmit = async (data: LoginModel) => {
     showSpinner();
     setError(null);
     try {
-      const body: AuthSchemaType = {
+      const body: LoginModel = {
         email: data.email,
         password: data.password,
         rule_id: 2,
+        rememberMe: data.rememberMe,
       };
       const response = await AuthService.login(body);
       if (response.status === 200) {
@@ -79,19 +76,17 @@ const Login = () => {
       <FormWrapper onSubmit={onSubmit} className="login-form" methods={methods}>
         <div className="input-label-block">
           <div className="input-label">Email</div>
-          <InputControl
+          <InputTextControl
             name="email"
-            className="input-styles"
             placeholder="Enter your email"
             required={true}
           />
         </div>
         <div className="input-label-block">
           <div className="input-label">Password</div>
-          <InputControl
+          <InputTextControl
             name="password"
             type="password"
-            className="input-styles"
             placeholder="Enter your password"
             required
           />
@@ -117,7 +112,6 @@ const Login = () => {
           type="submit"
           className="!w-full mt-4"
           label={`${mode === 1 ? "Login" : "Register"}`}
-          onClick={() => {}}
         />
       </FormWrapper>
     </>
