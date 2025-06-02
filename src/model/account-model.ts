@@ -10,3 +10,15 @@ export interface LoginModel {
   password: string;
   rememberMe: boolean;
 }
+
+export interface RegisterFormModel {
+  email: string;
+  password: string;
+}
+
+
+export interface RegisterReqModel {
+  email: string;
+  password: string;
+  rule_id: number;
+}

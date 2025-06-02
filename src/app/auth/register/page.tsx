@@ -1,22 +1,20 @@
 "use client";
-import { SubmitHandler, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 import { useLoginStore } from "../../../store/login-store";
-import { InputControl } from "../../../components/common/control/input/inputControl";
+import {} from "../../../components/common/control/input/inputControl";
 import FormWrapper from "../../../components/form/form";
-import { AuthSchema, AuthSchemaType } from "../../../schema/login-schema";
 import { useState } from "react";
 import AuthService from "../../../services/auth-service";
+import { RegisterFormModel, RegisterReqModel } from "@/model/account-model";
+import { InputTextControl } from "@/components/common/form/input-text";
 
 const Register = () => {
   const { mode } = useLoginStore();
   const methods = useForm({
-    resolver: zodResolver(AuthSchema),
     mode: "onChange",
     defaultValues: {
       email: "",
       password: "",
-      rememberMe: true,
     },
   });
 
@@ -24,13 +22,13 @@ const Register = () => {
   const [error, setError] = useState<string | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
-  const onSubmit: SubmitHandler<AuthSchemaType> = async (data) => {
+  const onSubmit = async (data: RegisterFormModel) => {
     setIsLoading(true);
     setError(null);
     setSuccessMessage(null);
 
     try {
-      const body: AuthSchemaType = {
+      const body: RegisterReqModel = {
         email: data.email,
         password: data.password,
         rule_id: 2,
@@ -59,7 +57,7 @@ const Register = () => {
       <FormWrapper onSubmit={onSubmit} className="login-form" methods={methods}>
         <div className="input-label-block">
           <div className="input-label">Email</div>
-          <InputControl
+          <InputTextControl
             name="email"
             className="input-styles"
             placeholder="Enter your email"
@@ -68,7 +66,7 @@ const Register = () => {
         </div>
         <div className="input-label-block">
           <div className="input-label">Password</div>
-          <InputControl
+          <InputTextControl
             name="password"
             type="password"
             className="input-styles"
