@@ -1,10 +1,9 @@
 import { API_ENDPOINT } from "../const/api-endpoint";
-import { AccountModel } from "../model/account-model";
-import { AuthSchemaType } from "../schema/login-schema";
+import { AccountModel, LoginModel, RegisterReqModel } from "../model/account-model";
 import createAPI, { BaseResponse } from "../util/api/base-api";
 
 class AuthService {
-  static createAccount = (body: AuthSchemaType): Promise<BaseResponse> => {
+  static createAccount = (body: RegisterReqModel): Promise<BaseResponse> => {
     return createAPI({
       method: "POST",
       url: API_ENDPOINT.CREATE_ACCOUNT,
@@ -13,7 +12,7 @@ class AuthService {
   };
 
   static login = (
-    body: AuthSchemaType
+    body: LoginModel
   ): Promise<BaseResponse<AccountModel>> => {
     return createAPI({
       method: "POST",

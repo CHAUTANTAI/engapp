@@ -7,6 +7,7 @@ import { useState } from "react";
 import AuthService from "../../../services/auth-service";
 import { RegisterFormModel, RegisterReqModel } from "@/model/account-model";
 import { InputTextControl } from "@/components/common/form/input-text";
+import { Button } from "primereact/button";
 
 const Register = () => {
   const { mode } = useLoginStore();
@@ -59,7 +60,6 @@ const Register = () => {
           <div className="input-label">Email</div>
           <InputTextControl
             name="email"
-            className="input-styles"
             placeholder="Enter your email"
             required={true}
           />
@@ -69,7 +69,6 @@ const Register = () => {
           <InputTextControl
             name="password"
             type="password"
-            className="input-styles"
             placeholder="Enter your password"
             required
           />
@@ -80,10 +79,10 @@ const Register = () => {
           {successMessage && <p className="text-green-500">{successMessage}</p>}
         </div>
 
-        <input
+        <Button
           type="submit"
           className="button-styles !w-full mt-4"
-          value={`${mode === 1 ? "Login" : "Register"}`}
+          label={`${mode === 1 ? "Login" : "Register"}`}
           disabled={isLoading}
         />
       </FormWrapper>
