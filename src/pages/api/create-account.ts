@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import pool from "./db";
+import pool from "../utils/db";
 
 const createAccount = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== "POST") {

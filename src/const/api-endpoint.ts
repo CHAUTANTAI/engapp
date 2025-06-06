@@ -1,7 +1,7 @@
 export const API_ENDPOINT = {
   // Auth
   CREATE_ACCOUNT: "create-account",
-  LOGIN: "login",
+  LOGIN: "auth/login",
 
   // Deck
   DECK_GET: "deck/get",

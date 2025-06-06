@@ -5,16 +5,11 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/layout/header/header";
 import { Footer } from "@/components/layout/footer/footer";
-import { usePathname, redirect } from "next/navigation";
-import { useMasterDataStore } from "@/store/master-data-store";
+import { usePathname } from "next/navigation";
 
 import { metadata } from "./metadata";
 import { ROUTER } from "@/const/routers";
-import { LoadingDialog } from "@/components/common/loading/loadingDialog";
-import { useCommonStore } from "@/store/common-store";
-import { useAuthCookies } from "@/hook/cookies";
 import { useEffect, useState } from "react";
-import { useAuthStore } from "@/store/auth-store";
 import { PrimeReactProvider } from "primereact/api";
 import { SidebarMenu } from "@/components/layout/sidebar-menu/sidebar-menu";
 
@@ -41,13 +36,8 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const { session, getSession } = useMasterDataStore();
-  const { isLoading } = useCommonStore();
-  const { getAuthCookie, getAccountIdCookie } = useAuthCookies();
   const pathName = usePathname();
-  const token = getAuthCookie()?.toString() || undefined;
-  const account_id = getAccountIdCookie() || undefined;
-  const {} = useAuthStore();
+
   const [sidebarModel, setSidebarModel] = useState<MenuItem[]>([]);
 
   const homeSidebarModel: MenuItem[] = [];
@@ -62,6 +52,7 @@ export default function RootLayout({
     { label: "Settings", icon: "pi pi-cog" },
   ];
 
+  /** Model Sidebar */
   useEffect(() => {
     if (pathName?.startsWith(ROUTER.DASHBOARD)) {
       setSidebarModel(dashboardSidebarModel);
@@ -73,24 +64,7 @@ export default function RootLayout({
       setSidebarModel([]);
     }
   }, [pathName]);
-  useEffect(() => {
-    if (token && token === "OOO") {
-      if (session === false) {
-        getSession();
-      }
-      useAuthStore.setState({
-        accountData: {
-          account_id: Number(account_id),
-          email: "",
-          rule_id: 2,
-        },
-      });
-    } else if (!pathName?.includes(ROUTER.AUTH)) {
-      redirect(ROUTER.LOGIN);
-    }
-  }, [token, pathName, getSession, session]);
 
-  console.log(sidebarModel);
   return (
     <html lang="en">
       <head>
@@ -122,7 +96,6 @@ export default function RootLayout({
         ) : (
           <>{children}</>
         )}
-        {isLoading === true ? <LoadingDialog /> : null}
       </body>
     </html>
   );

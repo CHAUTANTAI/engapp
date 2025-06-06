@@ -1,10 +1,16 @@
+import { SessionModel } from "@/model/account-model";
 import { create } from "zustand";
-import { AccountModel } from "../model/account-model";
 
 interface AuthStore {
-  accountData: AccountModel | null;
+  session?: SessionModel;
+  setSession: (session: SessionModel) => void;
+  accessToken: string;
+  setAccessToken: (token: string) => void;
 }
 
-export const useAuthStore = create<AuthStore>(() => ({
-  accountData: null,
+export const useAuthStore = create<AuthStore>((set) => ({
+  session: undefined,
+  accessToken: "",
+  setSession: (session) => set({ session }),
+  setAccessToken: (token) => set({ accessToken: token }),
 }));

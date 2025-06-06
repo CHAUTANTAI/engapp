@@ -1,5 +1,6 @@
 // src/util/api/base-api.ts
 import axios, { AxiosRequestConfig } from "axios";
+import Cookies from "js-cookie";
 
 // Common interface for error response
 export interface ErrorModel {
@@ -38,6 +39,14 @@ interface APIProps {
   body?: unknown;
   params?: unknown;
 }
+
+axios.interceptors.request.use((config) => {
+  const token = Cookies.get("access_token");
+  if (token) {
+    config.headers["Authorization"] = `Bearer ${token}`;
+  }
+  return config;
+});
 
 const createAPI = async <T = unknown>({
   body,
