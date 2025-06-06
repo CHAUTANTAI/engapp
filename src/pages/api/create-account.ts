@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import pool from "../utils/db";
+import { query } from "@/util/api/db";
 
 const createAccount = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== "POST") {
@@ -12,7 +12,7 @@ const createAccount = async (req: NextApiRequest, res: NextApiResponse) => {
   }
 
   try {
-    const result = await pool.query("CALL sp_create_account($1, $2, $3)", [
+    const result = await query("CALL sp_create_account($1, $2, $3)", [
       email,
       password,
       rule_id,

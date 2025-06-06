@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { ApiResponse, ParamSQL, query } from "@/pages/utils/db";
+
+import { ApiResponse, ParamSQL, query } from "@/util/api/db";
 
 export default async function handler(
   req: NextApiRequest,

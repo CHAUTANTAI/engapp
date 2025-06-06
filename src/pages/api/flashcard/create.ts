@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { ApiResponse, ParamSQL, query } from "@/pages/utils/db";
+import { ApiResponse, ParamSQL, query } from "@/util/api/db";
 
 export default async function handler(
   req: NextApiRequest,
@@ -18,7 +18,7 @@ export default async function handler(
   const sql = `select * from flashcard_create($1, $2, $3)`;
   const params: ParamSQL[] = [deck_id, term, definition];
   console.log("CTT params:", params);
-  
+
   try {
     const result = await query(sql, params);
     const row = result.rows[0];
