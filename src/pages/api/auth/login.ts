@@ -1,6 +1,6 @@
-import { query } from "@/util/api/db";
+import { query } from "@/lib/db-helper";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { generateAccessToken, generateRefreshToken } from "@/util/funs";
+import { generateAccessToken, generateRefreshToken } from "@/lib/funs";
 
 export default async function handler(
   req: NextApiRequest,

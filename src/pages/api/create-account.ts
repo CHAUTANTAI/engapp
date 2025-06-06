@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { query } from "@/util/api/db";
+import { query } from "@/lib/db-helper";
 
 const createAccount = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== "POST") {
